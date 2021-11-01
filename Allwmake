@@ -1,0 +1,6 @@
+#!/bin/bash
+
+wmake libso libraries/GaussQuadratures
+wmake libso libraries/LogMoM
+
+wmake applications/utilities/setLogNormal

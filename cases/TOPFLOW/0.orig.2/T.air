@@ -1,0 +1,43 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      T.air;
+}
+
+dimensions          [0 0 0 1 0 0 0];
+
+internalField       uniform 303.15;
+
+boundaryField
+{
+    walls
+    {
+        type               zeroGradient;
+    }
+    outlet
+    {
+        type               inletOutlet;
+        phi                phi.air;
+        inletValue         $internalField;
+        value              $internalField;
+    }
+    inlet
+    {
+        type               fixedValue;
+        value              $internalField;
+    }
+    wedgeFront
+    {
+        type            wedge;
+    }
+    wedgeBack
+    {
+        type            wedge;
+    }
+    axis
+    {
+        type            empty;
+    }
+}

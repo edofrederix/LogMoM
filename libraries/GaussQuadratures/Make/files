@@ -1,0 +1,13 @@
+GaussQuadrature/GaussQuadrature.C
+
+GaussHermiteQuadratures/GHQ3/GHQ3.C
+GaussHermiteQuadratures/GHQ5/GHQ5.C
+GaussHermiteQuadratures/GHQ10/GHQ10.C
+GaussHermiteQuadratures/GHQ20/GHQ20.C
+
+GaussLegendreQuadratures/GLQ3/GLQ3.C
+GaussLegendreQuadratures/GLQ5/GLQ5.C
+GaussLegendreQuadratures/GLQ10/GLQ10.C
+GaussLegendreQuadratures/GLQ20/GLQ20.C
+
+LIB = $(FOAM_USER_LIBBIN)/libfourFieldGaussQuadratures

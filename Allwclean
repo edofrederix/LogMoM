@@ -1,0 +1,6 @@
+#!/bin/bash
+
+wclean libraries/GaussQuadratures
+wclean libraries/LogMoM
+
+wclean applications/utilities/setLogNormal

@@ -1,0 +1,179 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      phaseProperties;
+}
+
+type populationBalanceMultiphaseSystem;
+
+phases (air water);
+
+populationBalances (bubbles);
+
+air
+{
+    type            pureIsothermalPhaseModel;
+
+    diameterModel   velocityGroup;
+
+    velocityGroupCoeffs
+    {
+        populationBalance    bubbles;
+
+        shapeModel           spherical;
+
+        sizeGroups
+        (
+            #include "sizeGroups"
+        );
+    }
+
+    residualAlpha   1e-6;
+}
+
+water
+{
+    type            pureIsothermalPhaseModel;
+
+    diameterModel   constant;
+
+    constantCoeffs
+    {
+        d           1e-4;
+    }
+
+    residualAlpha   1e-6;
+}
+
+populationBalanceCoeffs
+{
+    bubbles
+    {
+        continuousPhase water;
+
+        coalescenceModels
+        (
+            PrinceBlanch
+            {
+                turbulence on;
+                buoyancy on;
+                laminarShear off;
+            }
+        );
+
+        binaryBreakupModels
+        (
+            LuoSvendsen
+            {}
+        );
+
+        breakupModels
+        ();
+
+        driftModels
+        ();
+
+        nucleationModels
+        ();
+    }
+}
+
+blending
+{
+    default
+    {
+        type            none;
+        continuousPhase water;
+    }
+}
+
+surfaceTension
+(
+    (air and water)
+    {
+        type    constant;
+        sigma   0.07197;
+    }
+);
+
+interfaceCompression
+();
+
+aspectRatio
+(
+    (air in water)
+    {
+        type        Wellek;
+    }
+);
+
+drag
+(
+    (air in water)
+    {
+        type        IshiiZuber;
+    }
+    (water in air)
+    {
+        type        SchillerNaumann;
+        residualRe  1e-3;
+    }
+);
+
+virtualMass
+(
+    (air in water)
+    {
+        type    constantCoefficient;
+        Cvm     0.5;
+    }
+);
+
+heatTransfer
+();
+
+phaseTransfer
+();
+
+lift
+(
+    (air in water)
+    {
+        type wallDamped;
+
+        lift
+        {
+            type Tomiyama;
+        }
+
+        wallDamping
+        {
+            type    linear;
+            Cd      5.0;
+            zeroInNearWallCells true;
+        }
+    }
+);
+
+wallLubrication
+(
+    (air in water)
+    {
+        type    Frank;
+        Cwc	    10;
+        Cwd	    6.8;
+        p		1.7;
+    }
+);
+
+turbulentDispersion
+(
+    (air in water)
+    {
+        type        Burns;
+        sigma       1;
+    }
+);
