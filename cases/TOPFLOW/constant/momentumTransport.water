@@ -11,13 +11,8 @@ simulationType  RAS;
 
 RAS
 {
-    model       mixtureKEpsilon;
+    model       kOmegaSSTSato;
 
     turbulence  on;
     printCoeffs on;
-
-    mixtureKEpsilonCoeffs
-    {
-        Cp 0.25;
-    }
 }

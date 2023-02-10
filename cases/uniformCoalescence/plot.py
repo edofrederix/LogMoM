@@ -170,8 +170,6 @@ fig = plt.figure('N');
 plt.xlabel(r'$\tilde{t}$')
 plt.ylabel(r'$\tilde{N}$')
 
-plt.yscale('log')
-
 fs.post(fig, figSize, plt.legend())
 
 plt.savefig('N.pdf')
@@ -181,8 +179,6 @@ fig = plt.figure('S');
 plt.xlabel(r'$\tilde{t}$')
 plt.ylabel(r'$\tilde{S}$')
 
-plt.yscale('log')
-
 fs.post(fig, figSize, plt.legend())
 
 plt.savefig('S.pdf')
@@ -191,8 +187,6 @@ fig = plt.figure('B');
 
 plt.xlabel(r'$\tilde{t}$')
 plt.ylabel(r'$\tilde{B}$')
-
-plt.yscale('log')
 
 fs.post(fig, figSize, plt.legend())
 

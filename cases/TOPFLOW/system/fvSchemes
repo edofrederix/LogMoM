@@ -15,6 +15,7 @@ ddtSchemes
 gradSchemes
 {
     default         Gauss linear;
+    limited         cellLimited Gauss linear 1;
 }
 
 divSchemes
@@ -24,22 +25,26 @@ divSchemes
     "div\(phi,alpha.*\)"            Gauss vanLeer;
     "div\(phir,alpha.*\)"           Gauss vanLeer;
 
-    "div\(alphaPhi.*,(kappa|lambda).*\)"    Gauss vanLeer;
+    "div\(alphaPhi.*,(kappa|lambda).*\)"
+                                    Gauss upwind;
 
-    "div\(F(0|2)Phi.*,(kappa|lambda).*\)"   Gauss vanLeer;
+    "div\(F(0|2)Phi.*,(kappa|lambda).*\)"
+                                    Gauss upwind;
 
-    "div\(alphaRhoPhi.*,U.*\)"      Gauss limitedLinearV 1;
-    "div\(phi.*,U.*\)"              Gauss limitedLinearV 1;
+    "div\(alphaRhoPhi.*,U.*\)"      Gauss linearUpwind limited;
+    "div\(phi.*,U.*\)"              Gauss linearUpwind limited;
 
     "div\(alphaPhi.*,(h|e|f).*\)"   Gauss limitedLinear 1;
     "div\(alphaRhoPhi.*,K.*\)"      Gauss limitedLinear 1;
     "div\(alphaPhi.*,p\)"           Gauss limitedLinear 1;
 
-    "div\(alphaRhoPhi.*,(k|epsilon).*\)"
+    "div\(alphaRhoPhi.*,(k|epsilon|omega).*\)"
                                     Gauss upwind;
-    "div\(phim,(k|epsilon)m\)"      Gauss upwind;
+    "div\(phim,(k|epsilon|omega)m\)"
+                                    Gauss upwind;
 
-    "div\(\(\(\(alpha.*\*thermo:rho.*\)\*nuEff.*\)\*dev2\(T\(grad\(U.*\)\)\)\)\)" Gauss linear;
+    "div\(\(\(\(alpha.*\*thermo:rho.*\)\*nuEff.*\)\*dev2\(T\(grad\(U.*\)\)\)\)\)"
+                                    Gauss linear;
 }
 
 laplacianSchemes
@@ -54,9 +59,8 @@ interpolationSchemes
 
 wallDist
 {
-  method            meshWave;
-  correctWalls      true;
-  nRequired         yes;
+    method          Poisson;
+    nRequired       true;
 }
 
 snGradSchemes

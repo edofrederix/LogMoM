@@ -1,7 +1,7 @@
 #include "noBreak.H"
 #include "addToRunTimeSelectionTable.H"
 #include "uniformDimensionedFields.H"
-#include "phaseDynamicMomentumTransportModel.H"
+#include "phaseCompressibleMomentumTransportModel.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -19,7 +19,7 @@ namespace breakupModels
 
 Foam::breakupModels::noBreak::noBreak
 (
-    const orderedPhasePair& pair,
+    const dispersedPhaseInterface& pair,
     const dictionary& dict
 )
 :

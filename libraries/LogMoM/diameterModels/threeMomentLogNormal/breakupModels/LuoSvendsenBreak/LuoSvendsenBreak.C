@@ -1,6 +1,6 @@
 #include "LuoSvendsenBreak.H"
 #include "addToRunTimeSelectionTable.H"
-#include "phaseDynamicMomentumTransportModel.H"
+#include "phaseCompressibleMomentumTransportModel.H"
 #include "phaseSystem.H"
 #include "mathematicalConstants.H"
 #include "linearInterpolationWeights.H"
@@ -26,7 +26,7 @@ namespace breakupModels
 
 Foam::breakupModels::LuoSvendsenBreak::LuoSvendsenBreak
 (
-    const orderedPhasePair& pair,
+    const dispersedPhaseInterface& pair,
     const dictionary& dict
 )
 :
@@ -72,6 +72,7 @@ Foam::breakupModels::LuoSvendsenBreak::LuoSvendsenBreak
             "gamma5by11",
             Function1s::tableBase::boundsHandling::clamp,
             linearInterpolationWeights::typeName,
+            autoPtr<TableReader<scalar>>(nullptr),
             gammaUpperReg5by11Table
         );
 }

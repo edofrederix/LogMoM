@@ -2,7 +2,7 @@
 #include "addToRunTimeSelectionTable.H"
 #include "uniformDimensionedFields.H"
 #include "mathematicalConstants.H"
-#include "phaseDynamicMomentumTransportModel.H"
+#include "phaseCompressibleMomentumTransportModel.H"
 #include "phaseSystem.H"
 #include "fvc.H"
 
@@ -29,7 +29,7 @@ using Foam::constant::mathematical::pi;
 Foam::coalescenceFrequencyModels::LehrMilliesMewesCoaFreq
 ::LehrMilliesMewesCoaFreq
 (
-    const orderedPhasePair& pair,
+    const dispersedPhaseInterface& pair,
     const dictionary& dict
 )
 :

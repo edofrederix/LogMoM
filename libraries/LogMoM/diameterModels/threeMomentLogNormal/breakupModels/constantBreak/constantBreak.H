@@ -36,7 +36,7 @@ public:
         //- Construct from a dictionary
         constantBreak
         (
-            const orderedPhasePair& pair,
+            const dispersedPhaseInterface& pair,
             const dictionary& dict
         );
 

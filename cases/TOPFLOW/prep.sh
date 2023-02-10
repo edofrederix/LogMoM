@@ -12,8 +12,8 @@ SIMTYPE=LOGMOM
 
 SETUP=2
 
-# Length of the pipe scaled scaled by diameter (i.e., L/D). Setup 1 works with
-# 2.5, 8, 12.7, 23.2 or 40. Setup 2 only works with L/D = 40
+# Length of the pipe scaled by diameter (i.e., L/D). Setup 1 works with 2.5, 8,
+# 12.7, 23.2 or 40. Setup 2 only works with L/D = 40
 
 LENGTH=40
 
@@ -108,6 +108,8 @@ if [[ $SIMTYPE != "SECTIONAL" && $SIMTYPE != "LOGMOM" ]]; then
 
 fi
 
+YSAMPLE=$(echo "scale=10; $L-0.00001" | bc)
+
 cp constant/phaseProperties.$SIMTYPE constant/phaseProperties
 cp system/sampleFields.$SIMTYPE system/sampleFields
 
@@ -116,6 +118,7 @@ cp -r 0.orig.$SETUP 0
 VARS="\
     -DVARNX=$NX \
     -DVARL=$L \
+    -DVARYSAMPLE=$YSAMPLE \
     -DVART=$T \
     -DVARNZ=$NZ \
     -DVARUAIR=$UAIR \

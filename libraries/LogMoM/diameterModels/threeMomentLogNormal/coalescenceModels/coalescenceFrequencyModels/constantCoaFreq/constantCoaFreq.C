@@ -1,7 +1,7 @@
 #include "constantCoaFreq.H"
 #include "addToRunTimeSelectionTable.H"
 #include "uniformDimensionedFields.H"
-#include "phaseDynamicMomentumTransportModel.H"
+#include "phaseCompressibleMomentumTransportModel.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -19,7 +19,7 @@ namespace coalescenceFrequencyModels
 
 Foam::coalescenceFrequencyModels::constantCoaFreq::constantCoaFreq
 (
-    const orderedPhasePair& pair,
+    const dispersedPhaseInterface& pair,
     const dictionary& dict
 )
 :

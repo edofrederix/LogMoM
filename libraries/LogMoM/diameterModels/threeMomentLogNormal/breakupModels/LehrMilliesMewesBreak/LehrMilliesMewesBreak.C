@@ -1,6 +1,6 @@
 #include "LehrMilliesMewesBreak.H"
 #include "addToRunTimeSelectionTable.H"
-#include "phaseDynamicMomentumTransportModel.H"
+#include "phaseCompressibleMomentumTransportModel.H"
 #include "phaseSystem.H"
 #include "mathematicalConstants.H"
 #include "linearInterpolationWeights.H"
@@ -26,7 +26,7 @@ namespace breakupModels
 
 Foam::breakupModels::LehrMilliesMewesBreak::LehrMilliesMewesBreak
 (
-    const orderedPhasePair& pair,
+    const dispersedPhaseInterface& pair,
     const dictionary& dict
 )
 :

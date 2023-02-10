@@ -1,5 +1,5 @@
 #include "breakupModel.H"
-#include "phaseDynamicMomentumTransportModel.H"
+#include "phaseCompressibleMomentumTransportModel.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -14,7 +14,7 @@ namespace Foam
 Foam::autoPtr<Foam::breakupModel>
 Foam::breakupModel::New
 (
-    const orderedPhasePair& pair,
+    const dispersedPhaseInterface& pair,
     const dictionary& dict
 )
 {
@@ -43,7 +43,7 @@ Foam::breakupModel::New
 
 Foam::breakupModel::breakupModel
 (
-    const orderedPhasePair& pair,
+    const dispersedPhaseInterface& pair,
     const dictionary& dict
 )
 :

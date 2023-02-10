@@ -38,7 +38,7 @@ public:
         //- Construct from a dictionary
         LehrMilliesMewesCoaFreq
         (
-            const orderedPhasePair& pair,
+            const dispersedPhaseInterface& pair,
             const dictionary& dict
         );
 

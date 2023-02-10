@@ -48,7 +48,7 @@ public:
         //- Construct from a dictionary
         PrinceBlanchCoaFreq
         (
-            const orderedPhasePair& pair,
+            const dispersedPhaseInterface& pair,
             const dictionary& dict
         );
 

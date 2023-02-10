@@ -1,7 +1,7 @@
 #include "PrinceBlanchCoaEff.H"
 #include "addToRunTimeSelectionTable.H"
 #include "uniformDimensionedFields.H"
-#include "phaseDynamicMomentumTransportModel.H"
+#include "phaseCompressibleMomentumTransportModel.H"
 #include "phaseSystem.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -25,7 +25,7 @@ namespace coalescenceEfficiencyModels
 
 Foam::coalescenceEfficiencyModels::PrinceBlanchCoaEff::PrinceBlanchCoaEff
 (
-    const orderedPhasePair& pair,
+    const dispersedPhaseInterface& pair,
     const dictionary& dict
 )
 :

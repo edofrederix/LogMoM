@@ -48,7 +48,7 @@ public:
 
         LuoSvendsenBreak
         (
-            const orderedPhasePair& pair,
+            const dispersedPhaseInterface& pair,
             const dictionary& dict
         );
 

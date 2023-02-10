@@ -64,8 +64,8 @@ functions
             {
                 type    lineUniform;
                 axis    x;
-                start   (0 VARL 0);
-                end     (0.0975 VARL 0);
+                start   (0      VARYSAMPLE 0);
+                end     (0.0974 VARYSAMPLE 0);
                 nPoints 200;
             }
         );

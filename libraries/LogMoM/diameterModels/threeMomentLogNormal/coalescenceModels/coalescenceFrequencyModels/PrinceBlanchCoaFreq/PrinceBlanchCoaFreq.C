@@ -1,7 +1,7 @@
 #include "PrinceBlanchCoaFreq.H"
 #include "addToRunTimeSelectionTable.H"
 #include "uniformDimensionedFields.H"
-#include "phaseDynamicMomentumTransportModel.H"
+#include "phaseCompressibleMomentumTransportModel.H"
 #include "phaseSystem.H"
 #include "fvc.H"
 
@@ -26,7 +26,7 @@ namespace coalescenceFrequencyModels
 
 Foam::coalescenceFrequencyModels::PrinceBlanchCoaFreq::PrinceBlanchCoaFreq
 (
-    const orderedPhasePair& pair,
+    const dispersedPhaseInterface& pair,
     const dictionary& dict
 )
 :

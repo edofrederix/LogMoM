@@ -2,7 +2,7 @@
 #include "addToRunTimeSelectionTable.H"
 #include "uniformDimensionedFields.H"
 #include "mathematicalConstants.H"
-#include "phaseDynamicMomentumTransportModel.H"
+#include "phaseCompressibleMomentumTransportModel.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -20,7 +20,7 @@ namespace breakupModels
 
 Foam::breakupModels::constantBreak::constantBreak
 (
-    const orderedPhasePair& pair,
+    const dispersedPhaseInterface& pair,
     const dictionary& dict
 )
 :

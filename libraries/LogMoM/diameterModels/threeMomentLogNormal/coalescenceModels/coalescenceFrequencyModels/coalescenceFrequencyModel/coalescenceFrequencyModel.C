@@ -13,7 +13,7 @@ namespace Foam
 Foam::autoPtr<Foam::coalescenceFrequencyModel>
 Foam::coalescenceFrequencyModel::New
 (
-    const orderedPhasePair& pair,
+    const dispersedPhaseInterface& pair,
     const dictionary& dict
 )
 {
@@ -42,7 +42,7 @@ Foam::coalescenceFrequencyModel::New
 
 Foam::coalescenceFrequencyModel::coalescenceFrequencyModel
 (
-    const orderedPhasePair& pair,
+    const dispersedPhaseInterface& pair,
     const dictionary& dict
 )
 :

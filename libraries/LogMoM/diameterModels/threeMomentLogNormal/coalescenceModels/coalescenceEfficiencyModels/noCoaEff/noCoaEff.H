@@ -30,7 +30,7 @@ public:
         //- Construct from a dictionary
         noCoaEff
         (
-            const orderedPhasePair& pair,
+            const dispersedPhaseInterface& pair,
             const dictionary& dict
         );
 

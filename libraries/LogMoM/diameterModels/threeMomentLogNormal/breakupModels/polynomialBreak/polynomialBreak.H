@@ -38,7 +38,7 @@ public:
         //- Construct from a dictionary
         polynomialBreak
         (
-            const orderedPhasePair& pair,
+            const dispersedPhaseInterface& pair,
             const dictionary& dict
         );
 

@@ -1,5 +1,5 @@
 #include "coalescenceEfficiencyModel.H"
-#include "phaseDynamicMomentumTransportModel.H"
+#include "phaseCompressibleMomentumTransportModel.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -14,7 +14,7 @@ namespace Foam
 Foam::autoPtr<Foam::coalescenceEfficiencyModel>
 Foam::coalescenceEfficiencyModel::New
 (
-    const orderedPhasePair& pair,
+    const dispersedPhaseInterface& pair,
     const dictionary& dict
 )
 {
@@ -43,7 +43,7 @@ Foam::coalescenceEfficiencyModel::New
 
 Foam::coalescenceEfficiencyModel::coalescenceEfficiencyModel
 (
-    const orderedPhasePair& pair,
+    const dispersedPhaseInterface& pair,
     const dictionary& dict
 )
 :

@@ -79,8 +79,8 @@ blending
 {
     default
     {
-        type            none;
-        continuousPhase water;
+        type    continuous;
+        phase   water;
     }
 }
 

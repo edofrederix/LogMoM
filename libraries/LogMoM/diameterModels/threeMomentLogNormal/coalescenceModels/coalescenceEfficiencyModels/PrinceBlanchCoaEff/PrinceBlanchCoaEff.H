@@ -42,7 +42,7 @@ public:
         //- Construct from a dictionary
         PrinceBlanchCoaEff
         (
-            const orderedPhasePair& pair,
+            const dispersedPhaseInterface& pair,
             const dictionary& dict
         );
 

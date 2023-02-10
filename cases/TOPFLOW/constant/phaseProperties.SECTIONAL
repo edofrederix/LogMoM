@@ -85,8 +85,8 @@ blending
 {
     default
     {
-        type            none;
-        continuousPhase water;
+        type    continuous;
+        phase   water;
     }
 }
 
@@ -115,10 +115,6 @@ drag
     (air in water)
     {
         type        IshiiZuber;
-    }
-    (water in air)
-    {
-        type        SchillerNaumann;
         residualRe  1e-3;
     }
 );
@@ -147,13 +143,17 @@ lift
         lift
         {
             type Tomiyama;
+
+            aspectRatio
+            {
+                type    Wellek;
+            }
         }
 
         wallDamping
         {
-            type    linear;
-            Cd      5.0;
-            zeroInNearWallCells true;
+            type    cosine;
+            Cd      3.0;
         }
     }
 );
@@ -173,7 +173,7 @@ turbulentDispersion
 (
     (air in water)
     {
-        type        Burns;
-        sigma       1;
+        type    Burns;
+        sigma   1;
     }
 );

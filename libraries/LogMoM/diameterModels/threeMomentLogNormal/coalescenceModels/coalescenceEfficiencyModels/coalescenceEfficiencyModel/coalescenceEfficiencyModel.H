@@ -4,9 +4,9 @@
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "dictionary.H"
-#include "orderedPhasePair.H"
+#include "dispersedPhaseInterface.H"
 #include "runTimeSelectionTables.H"
-#include "phaseDynamicMomentumTransportModel.H"
+#include "phaseCompressibleMomentumTransportModel.H"
 
 namespace Foam
 {
@@ -22,7 +22,7 @@ protected:
     // Protected data
 
         //- Reference to the phase pair
-        const orderedPhasePair pair_;
+        const dispersedPhaseInterface pair_;
 
         //- Reference to the diameter dictionary
         const dictionary& dict_;
@@ -42,7 +42,7 @@ public:
             coalescenceEfficiencyModel,
             dictionary,
             (
-                const orderedPhasePair& pair,
+                const dispersedPhaseInterface& pair,
                 const dictionary& dict
             ),
             (pair, dict)
@@ -54,7 +54,7 @@ public:
         // Construct from ditionary
         coalescenceEfficiencyModel
         (
-            const orderedPhasePair& pair,
+            const dispersedPhaseInterface& pair,
             const dictionary& dict
         );
 
@@ -67,7 +67,7 @@ public:
 
         static autoPtr<coalescenceEfficiencyModel> New
         (
-            const orderedPhasePair& pair,
+            const dispersedPhaseInterface& pair,
             const dictionary& dict
         );
 

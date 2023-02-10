@@ -140,6 +140,11 @@ private:
         //- Update the models
         virtual void updateModels();
 
+        //- Limit moments so that mean diameters are in [dMin,dMax]. Option to
+        //  prevent the boundary condition update, which is needed when using
+        //  this function in the constructor
+        virtual void limitMoments(bool = true);
+
 public:
 
     //- Runtime type information

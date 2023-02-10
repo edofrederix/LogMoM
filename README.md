@@ -27,13 +27,13 @@ rights may be derived from the specified EU DuC or absence of an EU DuC.
 
 ## Prerequisites
 
-* OpenFOAM-9 Foundation version. While it may compile against other
+* OpenFOAM-10 Foundation version. While it may compile against other
   versions, this is not tested and currently not supported.
 * Python with numpy, scipy and matplotlib
 
 ## Usage
 
-* Make sure that OpenFOAM-9 is loaded into your environment
+* Make sure that OpenFOAM-10 is loaded into your environment
 * Compile all libraries and apps with
 
 <pre>
@@ -83,7 +83,7 @@ libs
 to your case's `system/controlDict` file. Next, you can select the
 `threeMomentLogNormal` model as a `diameterModel` for each phase, in the
 `constant/phaseProperties` file. Note that this works only with the
-`multiphaseEulerFoam` solver (in OpenFOAM-9). Additional parameters,
+`multiphaseEulerFoam` solver (in OpenFOAM-10). Additional parameters,
 such as the coalescence and break-up models to use, must be provided as
 well. An example is given in
 `cases/TOPFLOW/constant/phaseProperties.LOGMOM`. Finally, your case
@@ -95,7 +95,7 @@ second diameter-based moments of the size distribution of phase `<phase>`.
 
 For bug reports or support, feel free to contact Edo Frederix at
 frederix@nrg.eu. Please note that this code is not maintained nor
-regularly updated, and is only tested with OpenFOAM-9. Questions related
+regularly updated, and is only tested with OpenFOAM-10. Questions related
 to other versions will thus not be answered.
 
 ## Disclaimer
