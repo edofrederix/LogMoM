@@ -1,153 +1,291 @@
 
 #!/bin/bash
 
-# Parameters -------------------------------------------------------------------
-
-# Simulation type (either SECTIONAL or LOGMOM)
-
-SIMTYPE=LOGMOM
-
-# Case setup (1 -> Jg = 0.036 m/s, 2 -> Jg = 0.22 m/s, see Prasser et al.
-# (2007))
-
-SETUP=2
-
-# Length of the pipe scaled by diameter (i.e., L/D). Setup 1 works with 2.5, 8,
-# 12.7, 23.2 or 40. Setup 2 only works with L/D = 40
-
-LENGTH=40
-
-# Number of classes (only relevant for the sectional simulation type)
-
-CLASSES=30
-
-# ------------------------------------------------------------------------------
-
 source $FOAM_SRC/../bin/tools/RunFunctions
 source $FOAM_SRC/../bin/tools/CleanFunctions
 
-if [[ $SETUP == 1 ]]; then
+# Parameters -------------------------------------------------------------------
 
-    SIGMA=0.16;
-    DSM=6.8E-3;
+D=0.195         # Diameter of the pipe [m]
+L=7.5855        # Length of the pipe = D*(40-1.1) in [m]
+POUT=120000     # Outlet pressure [Pa]
 
-    NX=45;
+CASE=$1
+MESH=$2
+MODE=$3
 
-    case $LENGTH in
+case $CASE in
 
-        2.5)
-            L=0.4875
-            T=4
-            NZ=50
-            UAIR=1.137
-            ;;
-        8)
-            L=1.56
-            T=6
-            NZ=150
-            UAIR=1.052
-            ;;
-        12.7)
-            L=2.4765
-            T=7
-            NZ=250
-            UAIR=0.988
-            ;;
-        23.2)
-            L=4.524
-            T=10
-            NZ=450
-            UAIR=0.871
-            ;;
-        40)
-            L=7.8
-            T=12
-            NZ=750
-            UAIR=0.732
-            ;;
+    A)
+
+        JL=1
+        JG=0.037
+        DSM=0.00114
+        SIGMA=0.3062
+        ALPHAIN=0.031828
+
+    ;;
+
+    B)
+
+        JL=1
+        JG=0.22
+        DSM=0.003717
+        SIGMA=0.666149
+        ALPHAIN=0.10225
+
+    ;;
+
+    C)
+
+        JL=1
+        JG=0.53
+        DSM=0.003289
+        SIGMA=0.73136
+        ALPHAIN=0.17311
+
+    ;;
+
+    *)
+
+        echo "Invalid case specified, should be [A-C]"
+        exit
+
+    ;;
+
+esac
+
+if [[ ! "$MESH" =~ ^[1-9][0-9]?$ ]]; then
+
+    echo "Invalid mesh size. Specify the number of cells on the radius"
+    exit
+
+fi
+
+if [[ ! "$MODE" =~ ^(logmom|fpt)$ ]]; then
+
+    echo "Invalid mode (should be logmom or fpt)"
+    exit
+fi
+
+echo "Mode = $MODE, dsm = $DSM, sigma = $SIGMA"
+
+echo $CASE > case.txt
+echo $MESH > mesh.txt
+echo $MODE > mode.txt
+echo $DSM > dsm.txt
+echo $SIGMA > sigma.txt
+
+# ------------------------------------------------------------------------------
+
+ALPHAWATERIN=$(echo "print(1.0-$ALPHAIN)" | python3)
+
+UAIRIN=$(python3 U.py $POUT $L $ALPHAIN $JG)
+UWATERIN=$(echo "print($JL/$ALPHAWATERIN)" | python3)
+
+cp -r 0.org 0
+
+if [ "$MODE" == "logmom" ]; then
+
+    POLY=$4
+
+    cp system/sampleFields.LogMoM system/sampleFields
+    cp system/functions.LogMoM system/functions
+
+    case $POLY in
+
+        true)
+
+            m4 -DVARPHINAME="phi2.air" -DVARSIGMA=$SIGMA -DVARDSM=$DSM \
+                0/A.air.m4 > 0/A.air
+            m4 -DVARPHINAME="phi0.air" -DVARSIGMA=$SIGMA -DVARDSM=$DSM \
+                0/N.air.m4 > 0/N.air
+
+            m4 -DVARPHASESYSTEM=basicPolyPhaseSystem \
+                -DVARPHASEMODEL=pureIsothermalPolyPhaseModel \
+                constant/phaseProperties.LogMoM.m4 > constant/phaseProperties
+
+        ;;
+
+        false)
+
+            m4 -DVARPHINAME="phi.air" -DVARSIGMA=$SIGMA -DVARDSM=$DSM \
+                0/A.air.m4 > 0/A.air
+            m4 -DVARPHINAME="phi.air" -DVARSIGMA=$SIGMA -DVARDSM=$DSM \
+                0/N.air.m4 > 0/N.air
+
+            m4  -DVARPHASESYSTEM=basicMultiphaseSystem \
+                -DVARPHASEMODEL=pureIsothermalPhaseModel \
+                constant/phaseProperties.LogMoM.m4 > constant/phaseProperties
+
+            sed -i 's/U0\.air//g' system/sampleFields
+            sed -i 's/U2\.air//g' system/sampleFields
+
+            sed -i 's/phi2/phi/g' system/functions
+            sed -i 's/phi0/phi/g' system/functions
+
+        ;;
+
         *)
-            echo "Invalid length (2.5, 8, 12.7, 23.2 or 40)"
+
+            echo "Specify if simulation is poly-celeric (true or false)"
             exit
-            ;;
+        ;;
+
     esac
 
+    m4 -DVARPHASENAME=air -DVARALPHAIN=$ALPHAIN -DVARCASE=$CASE \
+        0/alpha.air.m4 > 0/alpha.air
+    m4 -DVARALPHAWATERIN=$ALPHAWATERIN -DVARCASE=$CASE \
+        0/alpha.water.m4 > 0/alpha.water
+
+    m4 -DVARPHASENAME=air -DVARUAIRIN=$UAIRIN 0/U.air.m4 > 0/U.air
+    m4 -DVARPHASENAME=air -DVARUAIRIN=$UAIRIN 0/U0.air.m4 > 0/U0.air
+    m4 -DVARPHASENAME=air -DVARUAIRIN=$UAIRIN 0/U2.air.m4 > 0/U2.air
+
+    m4 -DVARUWATERIN=$UWATERIN 0/U.water.m4 > 0/U.water
+
+    m4 -DVARPHASENAME=air 0/T.air.m4 > 0/T.air
+
+else
+
+    cp constant/phaseProperties.FPT constant/phaseProperties
+    cp system/sampleFields.FPT system/sampleFields
+    cp system/functions.FPT system/functions
+
+    NGROUPS=$4
+    NSECTIONSPERGROUP=$5
+
+    if [[ ! "$NGROUPS" =~ ^[0-9]+$ ]]; then
+
+        echo "Invalid number of groups"
+        exit 1
+
+    fi
+
+    if [[ ! "$NSECTIONSPERGROUP" =~ ^[0-9]+$ ]]; then
+
+        echo "Invalid number of sections per group"
+        exit 1
+
+    fi
+
+    python3 sizeGroups.py $DSM $SIGMA $NGROUPS $NSECTIONSPERGROUP $ALPHAIN
+
+    rm -fr constant/FPT
+    mkdir -p constant/FPT
+
+    K=0
+
+    A=($(cat alpha.txt))
+    SUMF=($(cat sumf.txt))
+
+    for ((I=1; I<=$NGROUPS; I++)); do
+
+        ALPHAIN=${A[$I-1]}
+        SUMFI=${SUMF[$I-1]}
+
+        N=$((I*NSECTIONSPERGROUP))
+        D=($(cat d.txt | head -n $N | tail -n $NSECTIONSPERGROUP))
+        F=($(cat f.txt | head -n $N | tail -n $NSECTIONSPERGROUP))
+
+        PHASENAME="air$I"
+        PHASEPAIR="${PHASENAME}_dispersedIn_water"
+
+        for ((J=0; J<$NSECTIONSPERGROUP; J++)); do
+
+            DJ=${D[$J]}
+            FJ=${F[$J]}
+
+            K=$((K+1))
+
+            echo "f$K {dSph $DJ; value $FJ;}" \
+                >> constant/FPT/sizeGroups.$PHASENAME
+            m4 -DVARPHASENAME=$PHASENAME -DVARFIELD=1.0 \
+                -DVARINLET=$FJ -DVARFNAME=f$K 0/f.air.m4 > 0/f$K.$PHASENAME
+
+            m4  -DVARFFIELD=f$K.$PHASENAME \
+                -DVARALPHAFLUX=alphaPhi.$PHASENAME \
+                -DVARFUNCTIONNAME=outletAlphaPhiF${K} \
+                -DVARPATCHNAME=outlet \
+                system/templates/functionF.m4 >> system/functions
+
+            m4  -DVARFFIELD=f$K.$PHASENAME \
+                -DVARALPHAFLUX=alphaPhi.$PHASENAME \
+                -DVARFUNCTIONNAME=inletAlphaPhiF${K} \
+                -DVARPATCHNAME=inlet \
+                system/templates/functionF.m4 >> system/functions
+
+            echo f$K.$PHASENAME >> system/sampleFields
+
+        done
+
+        VARS="-DVARPHASENAME=$PHASENAME -DVARPHASEPAIR=$PHASEPAIR"
+
+        echo $PHASENAME >> constant/FPT/phaseNames
+        m4 $VARS constant/templates/phase.m4 >> constant/FPT/phases
+        m4 $VARS constant/templates/drag.m4 >> constant/FPT/drags
+        m4 $VARS constant/templates/lift.m4 >> constant/FPT/lifts
+        m4 $VARS constant/templates/wallLubrication.m4 \
+            >> constant/FPT/wallLubrications
+        m4 $VARS constant/templates/surfaceTension.m4 \
+            >> constant/FPT/surfaceTensions
+        m4 $VARS constant/templates/turbulentDispersion.m4 \
+            >> constant/FPT/turbulentDispersions
+        m4 $VARS constant/templates/virtualMass.m4 >> constant/FPT/virtualMasses
+
+        sed -i 's/@include/#include/g' constant/FPT/phases
+
+        m4 -DVARPHASENAME=$PHASENAME -DVARALPHAIN=$ALPHAIN -DVARCASE=$CASE \
+            0/alpha.air.m4 > 0/alpha.$PHASENAME
+        m4 -DVARPHASENAME=$PHASENAME  -DVARUAIRIN=$UAIRIN 0/U.air.m4 \
+            > 0/U.$PHASENAME
+        m4 -DVARPHASENAME=$PHASENAME  0/T.air.m4 > 0/T.$PHASENAME
+
+        m4 -DVARPHASENAME=$PHASENAME -DVARFIELD=1.0 -DVARINLET=1.0 \
+            -DVARFNAME=f 0/f.air.m4 > 0/f.$PHASENAME
+
+        cp constant/momentumTransport.air constant/momentumTransport.$PHASENAME
+        cp constant/thermophysicalProperties.air \
+            constant/thermophysicalProperties.$PHASENAME
+
+        m4  -DVARFLUX=phi.$PHASENAME \
+            -DVARFUNCTIONNAME=outletPhi${I} \
+            -DVARPATCHNAME=outlet \
+            system/templates/functionPhi.m4 >> system/functions
+
+        m4  -DVARFLUX=phi.$PHASENAME \
+            -DVARFUNCTIONNAME=inletPhi${I} \
+            -DVARPATCHNAME=inlet \
+            system/templates/functionPhi.m4 >> system/functions
+
+        echo U.$PHASENAME >> system/sampleFields
+
+    done
+
+    m4 -DVARUWATERIN=$UWATERIN 0/U.water.m4 > 0/U.water
+    m4 -DVARALPHAWATERIN=$ALPHAWATERIN -DVARCASE=$CASE 0/alpha.water.m4 \
+        > 0/alpha.water
+
+    echo water >> constant/FPT/phaseNames
+
 fi
-
-if [[ $SETUP == 2 ]]; then
-
-    SIGMA=1.024;
-    DSM=21.35E-3;
-
-    NX=30;
-
-    L=7.8
-    T=12
-    NZ=500
-    UAIR=1
-
-fi
-
-if [[ $SETUP != 1 && $SETUP != 2 ]]; then
-
-    echo "Invalid setup (1 or 2)"
-    exit
-
-fi
-
-if [[ $CLASSES -gt 100 || $CLASSES -lt 3 ]]; then
-
-    echo "Invalid number of classes (3 =< CLASSES < 100)"
-    exit
-
-fi
-
-if [[ $SIMTYPE != "SECTIONAL" && $SIMTYPE != "LOGMOM" ]]; then
-
-    echo "Invalid simulation type (LOGMOM or SECTIONAL)"
-    exit
-
-fi
-
-YSAMPLE=$(echo "scale=10; $L-0.00001" | bc)
-
-cp constant/phaseProperties.$SIMTYPE constant/phaseProperties
-cp system/sampleFields.$SIMTYPE system/sampleFields
-
-cp -r 0.orig.$SETUP 0
-
-VARS="\
-    -DVARNX=$NX \
-    -DVARL=$L \
-    -DVARYSAMPLE=$YSAMPLE \
-    -DVART=$T \
-    -DVARNZ=$NZ \
-    -DVARUAIR=$UAIR \
-    -DVARSIGMA=$SIGMA \
-    -DVARDSM=$DSM \
-    "
-
-find -name *.m4 | while read IN; do
-
-    OUT=$(echo $IN | rev | cut -c 4- | rev)
-
-    m4 $VARS $IN > $OUT
-
-done
 
 rm -f 0/*.m4
 
+wmake -s TOPFLOWAlphaInlet
+
+NR=$MESH
+NZ=$(echo "print(int(round(2.0*$L/$D*$MESH/6.0)))" | python)
+
+m4 -DVARNR=$NR -DVARNZ=$NZ system/blockMeshDict.m4 > system/blockMeshDict
+
 runApplication blockMesh
 
-runApplication setFields
-
-if [[ $SIMTYPE == "SECTIONAL" ]]; then
-
-    python sizeGroups.py $CLASSES $SETUP
-
-fi
-
-if [[ $SIMTYPE == "LOGMOM" ]]; then
+if [ "$MODE" == "logmom" ]; then
 
     runApplication setLogNormal air $SIGMA $DSM
 
 fi
+
+runApplication decomposePar

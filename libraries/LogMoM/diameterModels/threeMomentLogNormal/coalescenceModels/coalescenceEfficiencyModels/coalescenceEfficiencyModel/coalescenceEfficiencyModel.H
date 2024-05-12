@@ -24,9 +24,11 @@ protected:
         //- Reference to the phase pair
         const dispersedPhaseInterface pair_;
 
-        //- Reference to the diameter dictionary
-        const dictionary& dict_;
+        //- Reference to the coefficients dictionary
+        const dictionary& coeffs_;
 
+        //- Coefficients dictionary name
+        const static word coeffsDictName_;
 
 public:
 

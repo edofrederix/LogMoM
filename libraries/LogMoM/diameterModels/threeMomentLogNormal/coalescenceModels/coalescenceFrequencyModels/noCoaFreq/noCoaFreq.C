@@ -23,7 +23,11 @@ Foam::coalescenceFrequencyModels::noCoaFreq::noCoaFreq
     const dictionary& dict
 )
 :
-    coalescenceFrequencyModel(pair, dict)
+    coalescenceFrequencyModel
+    (
+        pair,
+        dict.subDict(this->type() + this->coeffsDictName_)
+    )
 {}
 
 

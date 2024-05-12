@@ -1,0 +1,26 @@
+forces0
+{
+    type                populationBalanceForces;
+    populationBalance   air;
+    gamma               0;
+    executeControl      writeTime;
+    writeControl        writeTime;
+}
+
+forces2
+{
+    type                populationBalanceForces;
+    populationBalance   air;
+    gamma               2;
+    executeControl      writeTime;
+    writeControl        writeTime;
+}
+
+forces3
+{
+    type                populationBalanceForces;
+    populationBalance   air;
+    gamma               3;
+    executeControl      writeTime;
+    writeControl        writeTime;
+}

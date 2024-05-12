@@ -1,0 +1,99 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      phaseProperties;
+}
+
+type    populationBalanceMultiphaseSystem;
+
+phases
+(
+    #include "FPT/phaseNames"
+);
+
+populationBalances (air);
+
+#include "FPT/phases"
+
+water
+{
+    type            pureIsothermalPhaseModel;
+
+    diameterModel   none;
+
+    residualAlpha   1e-12;
+}
+
+populationBalanceCoeffs
+{
+    air
+    {
+        continuousPhase water;
+
+        coalescenceModels
+        ();
+
+        binaryBreakupModels
+        ();
+
+        breakupModels
+        ();
+
+        driftModels
+        (
+            densityChange{}
+        );
+
+        nucleationModels
+        ();
+    }
+}
+
+blending
+{
+    default
+    {
+        type            continuous;
+        phase           water;
+    }
+}
+
+surfaceTension
+{
+    #include "FPT/surfaceTensions"
+}
+
+interfaceCompression
+{}
+
+drag
+{
+    #include "FPT/drags"
+}
+
+virtualMass
+{
+    #include "FPT/virtualMasses"
+}
+
+heatTransfer
+{}
+
+phaseTransfer
+{}
+
+lift
+{
+    #include "FPT/lifts"
+}
+
+wallLubrication
+{
+    #include "FPT/wallLubrications"
+}
+
+turbulentDispersion
+{
+    #include "FPT/turbulentDispersions"
+}

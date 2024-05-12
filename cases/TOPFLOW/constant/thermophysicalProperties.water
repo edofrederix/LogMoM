@@ -26,16 +26,16 @@ mixture
     }
     equationOfState
     {
-        rho         997;
+        rho         998;
     }
     thermodynamics
     {
-        Cv          4180;
+        Cv          1000;
         Hf          0;
     }
     transport
     {
-        mu          7.9722e-4;
-        Pr          5.4230;
+        mu          1e-3;
+        Pr          1;
     }
 }

@@ -41,8 +41,6 @@ bubbles
         p               3;
         q               2;
 
-        closingMoment   squaredVolume;
-
         coalescence
         {
             active          true;
@@ -50,14 +48,14 @@ bubbles
             efficiencyType  polynomial;
             frequencyType   constant;
 
-            polynomialEfficiencyCoeffs
+            polynomialCoaEffCoeffs
             {
                 K   (VARCOARATE1 VARCOARATE2 VARCOARATE3 VARCOARATE4);
                 p   (VARP1 VARP2 VARP3 VARP4);
                 q   (VARQ1 VARQ2 VARQ3 VARQ4);
             }
 
-            constantFrequencyCoeffs
+            constantCoaFreqCoeffs
             {
                 K   1.0;
             }

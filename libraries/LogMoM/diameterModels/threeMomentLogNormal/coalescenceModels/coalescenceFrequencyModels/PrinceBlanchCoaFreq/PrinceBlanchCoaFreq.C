@@ -30,12 +30,16 @@ Foam::coalescenceFrequencyModels::PrinceBlanchCoaFreq::PrinceBlanchCoaFreq
     const dictionary& dict
 )
 :
-    coalescenceFrequencyModel(pair, dict),
-    C1_(dimensionedScalar::lookupOrDefault("C1", dict, dimless, 0.356)),
-    sigma_("sigma", dimMass/sqr(dimTime), dict.lookup("sigma")),
-    turbulent_(dict.lookup("turbulentCoalescence")),
-    buoyant_(dict.lookup("buoyantCoalescence")),
-    laminar_(dict.lookup("laminarCoalescence"))
+    coalescenceFrequencyModel
+    (
+        pair,
+        dict.subDict(this->type() + this->coeffsDictName_)
+    ),
+    C1_(dimensionedScalar::lookupOrDefault("C1", coeffs_, dimless, 0.356)),
+    sigma_("sigma", dimMass/sqr(dimTime), coeffs_.lookup("sigma")),
+    turbulent_(coeffs_.lookup("turbulentCoalescence")),
+    buoyant_(coeffs_.lookup("buoyantCoalescence")),
+    laminar_(coeffs_.lookup("laminarCoalescence"))
 {}
 
 

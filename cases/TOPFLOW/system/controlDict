@@ -1,0 +1,80 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+
+application     multiphaseEulerFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         15;
+
+deltaT          1e-5;
+
+writeControl    adjustableRunTime;
+
+writeInterval   1;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   10;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.4;
+
+maxDeltaT       1;
+
+libs
+(
+    "libLogMoM.so"
+    "libTOPFLOWAlphaInlet.so"
+);
+
+functions
+{
+    #include "functions"
+
+    sample
+    {
+        type                sets;
+        libs                ("libsampling.so");
+        writeControl        writeTime;
+        interpolationScheme cellPoint;
+        setFormat           raw;
+        name                sample;
+        sets
+        (
+            outlet
+            {
+                type    lineUniform;
+                axis    x;
+                start   (0.0001 7.585 0);
+                end     (0.0974 7.585 0);
+                nPoints 64;
+            }
+        );
+        fields
+        (
+            #include "sampleFields"
+        );
+    }
+}

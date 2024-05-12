@@ -29,13 +29,17 @@ Foam::coalescenceEfficiencyModels::PrinceBlanchCoaEff::PrinceBlanchCoaEff
     const dictionary& dict
 )
 :
-    coalescenceEfficiencyModel(pair, dict),
+    coalescenceEfficiencyModel
+    (
+        pair,
+        dict.subDict(this->type() + this->coeffsDictName_)
+    ),
     h0_
     (
         dimensionedScalar::lookupOrDefault
         (
             "h0",
-            dict,
+            coeffs_,
             dimLength,
             1e-4
         )
@@ -45,12 +49,12 @@ Foam::coalescenceEfficiencyModels::PrinceBlanchCoaEff::PrinceBlanchCoaEff
         dimensionedScalar::lookupOrDefault
         (
             "hf",
-            dict,
+            coeffs_,
             dimLength,
             1e-8
         )
     ),
-    sigma_("sigma", dimMass/sqr(dimTime), dict.lookup("sigma"))
+    sigma_("sigma", dimMass/sqr(dimTime), coeffs_.lookup("sigma"))
 {}
 
 

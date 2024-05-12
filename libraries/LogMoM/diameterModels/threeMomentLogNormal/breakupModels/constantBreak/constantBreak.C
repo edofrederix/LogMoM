@@ -24,12 +24,16 @@ Foam::breakupModels::constantBreak::constantBreak
     const dictionary& dict
 )
 :
-    breakupModel(pair, dict),
+    breakupModel
+    (
+        pair,
+        dict.subDict(this->type() + this->coeffsDictName_)
+    ),
     B_
     (
         "B",
         inv(dimTime),
-        dict
+        coeffs_
     )
 {}
 

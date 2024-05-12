@@ -7,6 +7,8 @@ namespace Foam
 {
     defineTypeNameAndDebug(breakupModel, 0);
     defineRunTimeSelectionTable(breakupModel, dictionary);
+
+    const word breakupModel::coeffsDictName_("BreakCoeffs");
 }
 
 // * * * * * * * * * * * * * * * * Selector  * * * * * * * * * * * * * * * * //
@@ -48,7 +50,7 @@ Foam::breakupModel::breakupModel
 )
 :
     pair_(pair.dispersed(), pair.continuous()),
-    dict_(dict)
+    coeffs_(dict)
 {}
 
 

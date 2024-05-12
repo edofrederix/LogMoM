@@ -28,7 +28,11 @@ Foam::coalescenceEfficiencyModels::noCoaEff::noCoaEff
     const dictionary& dict
 )
 :
-    coalescenceEfficiencyModel(pair, dict)
+    coalescenceEfficiencyModel
+    (
+        pair,
+        dict.subDict(this->type() + this->coeffsDictName_)
+    )
 {}
 
 

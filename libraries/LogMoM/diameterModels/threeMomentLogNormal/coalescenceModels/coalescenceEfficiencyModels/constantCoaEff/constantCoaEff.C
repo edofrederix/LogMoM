@@ -28,13 +28,12 @@ Foam::coalescenceEfficiencyModels::constantCoaEff::constantCoaEff
     const dictionary& dict
 )
 :
-    coalescenceEfficiencyModel(pair, dict),
-    K_
+    coalescenceEfficiencyModel
     (
-        "K",
-        dimless,
-        dict.subDict("constantEfficiencyCoeffs")
-    )
+        pair,
+        dict.subDict(this->type() + this->coeffsDictName_)
+    ),
+    K_("K", dimless, coeffs_)
 {}
 
 

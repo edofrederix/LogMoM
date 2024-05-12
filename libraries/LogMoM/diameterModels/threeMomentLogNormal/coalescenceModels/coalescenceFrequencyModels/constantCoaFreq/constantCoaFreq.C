@@ -23,13 +23,12 @@ Foam::coalescenceFrequencyModels::constantCoaFreq::constantCoaFreq
     const dictionary& dict
 )
 :
-    coalescenceFrequencyModel(pair, dict),
-    K_
+    coalescenceFrequencyModel
     (
-        "K",
-        dimVolume/dimTime,
-        dict.subDict("constantFrequencyCoeffs")
-    )
+        pair,
+        dict.subDict(this->type() + this->coeffsDictName_)
+    ),
+    K_("K", dimVolume/dimTime, coeffs_)
 {}
 
 

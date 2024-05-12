@@ -23,70 +23,56 @@ namespace diameterModels
         threeMomentLogNormal,
         dictionary
     );
-
-    template<>
-    const char*
-        NamedEnum<threeMomentLogNormal::closingMomentType, 2>::names[] =
-        {"interfacialArea", "squaredVolume"};
-
-    const NamedEnum<threeMomentLogNormal::closingMomentType, 2>
-        threeMomentLogNormal::closingMomentTypeNames_;
 }
 }
 
-// * * * * * * * * * * * * Private Member Functions * * * * * * * * * * * *//
+// * * * * * * * * * * * Protected Member Functions * * * * * * * * * * * *//
 
-void Foam::diameterModels::threeMomentLogNormal::limitMoments(bool corrBou)
+void Foam::diameterModels::threeMomentLogNormal::correctLimitedScaledMoments()
 {
+    // In the limit of small alpha, we want to move to a mono-dispersed size
+    // distribution at size dMin. This is done by the blending function F. To
+    // assure that the Sauter mean diameter is in between dMin and dMax, the
+    // scaled interfacial area is limited accordingly. Furthermore, to assure
+    // realizability (i.e., a real non-negative sigma), we must satisfy the
+    // relation lambda >= kappa^3/(36*1e6*pi). This condition can be derived
+    // from Eq. (9) in Habiyaremye et al., (2022).
+
+    const volScalarField& alpha = phase();
+    const dimensionedScalar residualAlpha(phase().residualAlpha());
+
+    const volScalarField F
+    (
+        max(residualAlpha - alpha, scalar(0))/residualAlpha
+    );
+
     const scalar pi(constant::mathematical::pi);
 
-    // Limit lambda based on the diameter of average mass
-
-    lambda_ =
-        min
-        (
-            max(lambda_, 6.0/(pi*1e6*pow(dMax_,3))),
-            6.0/(pi*1e6*pow(dMin_,3))
-        );
-
-    if (corrBou)
-    {
-        lambda_.correctBoundaryConditions();
-    }
-
-    // Limit kappa based on the Sauter mean diameter
+    const volScalarField alphar(max(alpha,residualAlpha));
 
     kappa_ =
         min
         (
-            max(kappa_, 6.0/dMax_),
+            max
+            (
+                6.0/dMin_*F + A_/alphar*(1.0-F),
+                6.0/dMax_
+            ),
             6.0/dMin_
         );
 
-    if (corrBou)
-    {
-        kappa_.correctBoundaryConditions();
-    }
-
-    // Limit beta based on d_36
-
-    beta_ =
-        min
+    lambda_ =
+        max
         (
-            max(beta_, 6.0*pow(dMin_,3)/pi),
-            6.0*pow(dMax_,3)/pi
+            N_/alphar,
+            pow(kappa_,3.0)/(36.0*pi*1e6)
         );
-
-    if (corrBou)
-    {
-        beta_.correctBoundaryConditions();
-    }
 }
 
 Foam::tmp<Foam::volScalarField>
 Foam::diameterModels::threeMomentLogNormal::dsm() const
 {
-    return d(p_,q_);
+    return max(6/max(kappa_, 6/dMax_), dMin_);
 }
 
 Foam::tmp<Foam::volScalarField> Foam::diameterModels::threeMomentLogNormal::d
@@ -114,24 +100,19 @@ Foam::tmp<Foam::volScalarField> Foam::diameterModels::threeMomentLogNormal::d
 
     volScalarField& d = td.ref();
 
-    if (closingMoment_ == closingMomentType::interfacialArea)
-    {
-        // Compute the diameter from the interfacial area concentration
-
-        d = pow(6.0,(p+q-2)/3)
+    d = min
+    (
+        max
+        (
+            pow(6.0,(p+q-2)/3)
           * pow(pi*lambda_*1e6,(p+q-5)/6)
-          / pow(kappa_,(p+q-3)/2);
-    }
-    else
-    {
-        // Compute the diameter from the squared volume concentration
+          / pow(kappa_,(p+q-3)/2),
+            dMin_
+        ),
+        dMax_
+    );
 
-        d = pow(pi/6.0,(p+q-6)/9)
-          * pow(beta_,(p+q-3)/18)
-          * pow(1e6*lambda_,(p+q-9)/18);
-    }
-
-    return min(max(d,dMin_),dMax_);
+    return td;
 }
 
 Foam::tmp<Foam::volScalarField>
@@ -156,39 +137,18 @@ Foam::diameterModels::threeMomentLogNormal::sigma() const
 
     volScalarField& s = tsigma.ref();
 
-    const dimensionedScalar unityDimless(dimless,1.0);
-
-    if (closingMoment_ == closingMomentType::interfacialArea)
-    {
-        s =
-            sqrt
+    s =
+        sqrt
+        (
+            log
             (
-                log
+                max
                 (
-                    max
-                    (
-                        cbrt(36.0*pi*1e6*lambda_)/kappa_,
-                        unityDimless
-                    )
+                    cbrt(36.0*pi*1e6*lambda_)/kappa_,
+                    dimensionedScalar(dimless, 1.0)
                 )
-            );
-    }
-    else
-    {
-        s =
-            sqrt
-            (
-                1.0/9.0
-              * log
-                (
-                    max
-                    (
-                        beta_*1e6*lambda_*sqr(pi/6.0),
-                        unityDimless
-                    )
-                )
-            );
-    }
+            )
+        );
 
     return tsigma;
 }
@@ -239,11 +199,11 @@ void Foam::diameterModels::threeMomentLogNormal::updateCoalescenceSources
         );
     }
 
-    volScalarField lambdaCoa
+    volScalarField NCoa
     (
         IOobject
         (
-             "lambdaCoa",
+             "NCoa",
              mesh_.time().timeName(),
              mesh_
         ),
@@ -251,28 +211,16 @@ void Foam::diameterModels::threeMomentLogNormal::updateCoalescenceSources
         dimensionedScalar(dimVolume/dimTime, Zero)
     );
 
-    volScalarField kappaCoa
+    volScalarField ACoa
     (
         IOobject
         (
-             "kappaCoa",
+             "ACoa",
              mesh_.time().timeName(),
              mesh_
         ),
         mesh_,
         dimensionedScalar(pow5(dimLength)/dimTime, Zero)
-    );
-
-    volScalarField betaCoa
-    (
-        IOobject
-        (
-             "betaCoa",
-             mesh_.time().timeName(),
-             mesh_
-        ),
-        mesh_,
-        dimensionedScalar(pow(dimLength,9)/dimTime, Zero)
     );
 
     for (label i = 0; i < GHQ.size(); i++)
@@ -289,48 +237,21 @@ void Foam::diameterModels::threeMomentLogNormal::updateCoalescenceSources
               * coaFreqModel_->frequency(d[i],d[j])
             );
 
-            lambdaCoa += -K*wi*wj
-                       * (i == j ? 1.0 : 2.0);
+            NCoa += -K*wi*wj*(i == j ? 1.0 : 2.0);
 
-            if (closingMoment_ == closingMomentType::interfacialArea)
-            {
-                kappaCoa +=
-                    (
-                        cbrt(sqr(pow3(d[i]) + pow3(d[j])))
-                      - sqr(d[i])
-                      - sqr(d[j])
-                    )
-                  * K*wi*wj*pi
-                  * (i == j ? 1.0 : 2.0);
-            }
-            else
-            {
-                betaCoa +=
-                    2.0*pow3(d[i])*pow3(d[j])
-                  * K*wi*wj
-                  * (i == j ? 1.0 : 2.0);
-            }
+            ACoa +=
+                (
+                    cbrt(sqr(pow3(d[i]) + pow3(d[j])))
+                  - sqr(d[i])
+                  - sqr(d[j])
+                )
+              * K*wi*wj*pi
+              * (i == j ? 1.0 : 2.0);
         }
     }
 
-    lambdaCoaRate_ = -0.5/pi*sqr(alpha)*1e6*lambda_*lambdaCoa;
-
-    if (closingMoment_ == closingMomentType::interfacialArea)
-    {
-        kappaCoaRate_ =
-          - 0.5/pi
-          * sqr(alpha*1e6*lambda_)
-          * kappaCoa
-          / kappa_;
-    }
-    else
-    {
-        betaCoaRate_ =
-          - 0.5/pi
-          * sqr(alpha*1e6*lambda_)
-          * betaCoa
-          / beta_;
-    }
+    NCoaRate_ = -0.5/pi*alpha*lambda_*1e6*NCoa;
+    ACoaRate_ = -0.5/pi*alpha*sqr(1e6*lambda_)/kappa_*ACoa;
 }
 
 void Foam::diameterModels::threeMomentLogNormal::updateBreakupSources
@@ -398,11 +319,11 @@ void Foam::diameterModels::threeMomentLogNormal::updateBreakupSources
         );
     }
 
-    volScalarField lambdaBreak
+    volScalarField NBreak
     (
         IOobject
         (
-             "lambdaBreak",
+             "NBreak",
              mesh_.time().timeName(),
              mesh_
         ),
@@ -410,28 +331,16 @@ void Foam::diameterModels::threeMomentLogNormal::updateBreakupSources
         dimensionedScalar(inv(dimTime), Zero)
     );
 
-    volScalarField kappaBreak
+    volScalarField ABreak
     (
         IOobject
         (
-             "kappaBreak",
+             "ABreak",
              mesh_.time().timeName(),
              mesh_
         ),
         mesh_,
         dimensionedScalar(sqr(dimLength)/dimTime, Zero)
-    );
-
-    volScalarField betaBreak
-    (
-        IOobject
-        (
-             "betaBreak",
-             mesh_.time().timeName(),
-             mesh_
-        ),
-        mesh_,
-        dimensionedScalar(pow6(dimLength)/dimTime, Zero)
     );
 
     volScalarField B
@@ -478,71 +387,36 @@ void Foam::diameterModels::threeMomentLogNormal::updateBreakupSources
 
             const scalar wj(GLQ.w()[j]);
 
-            lambdaBreak +=
+            NBreak +=
                 B*(pi/2.0)*pow3(d1[i])
               * 0.5*wj*wi*(1.0/3.0);
 
-            if (closingMoment_ == closingMomentType::interfacialArea)
-            {
-                kappaBreak +=
-                    B*(pi/2.0)*pow3(d1[i])
-                  * (sqr(d2)-sqr(d1[i])/2.0)
-                  * wj*wi*(1.0/3.0);
-            }
-            else
-            {
-                betaBreak +=
-                    B*(pi/2.0)*pow3(d1[i])
-                  * (pow6(d2)-pow6(d1[i])/2.0)
-                  * wj*wi*(1.0/3.0);
-            }
+            ABreak +=
+                B*(pi/2.0)*pow3(d1[i])
+              * (sqr(d2)-sqr(d1[i])/2.0)
+              * wj*wi*(1.0/3.0);
         }
     }
 
-    lambdaBreakRate_ = alpha/(2.0*sqrt(pi))*lambdaBreak;
-
-    if (closingMoment_ == closingMomentType::interfacialArea)
-    {
-        kappaBreakRate_ =
-            alpha*sqrt(pi)/2.0*1e6*lambda_
-          * max(kappaBreak, dimensionedScalar(sqr(dimLength)/dimTime, Zero))
-          / kappa_;
-    }
-    else
-    {
-        betaBreakRate_ =
-            alpha/(2.0*sqrt(pi))*1e6*lambda_*betaBreak
-          / beta_;
-    }
+    NBreakRate_ = 1.0/(2.0*sqrt(pi))*NBreak;
+    ABreakRate_ = sqrt(pi)/2.0*1e6*lambda_/kappa_*ABreak;
 }
 
 void Foam::diameterModels::threeMomentLogNormal::readModels()
 {
-    const phaseModel& continuousPhase =
-        mesh_.lookupObject<phaseModel>
-        (
-            IOobject::groupName
-            (
-                "alpha",
-                diameterProperties().lookup("continuousPhase")
-            )
-        );
-
-    const dispersedPhaseInterface pair(phase(), continuousPhase);
-
     if (coalescence_ && coaEffModel_.empty() && coaFreqModel_.empty())
     {
         coaEffModel_ =
             coalescenceEfficiencyModel::New
             (
-                pair,
+                interface(),
                 diameterProperties().subDict("coalescence")
             );
 
         coaFreqModel_ =
             coalescenceFrequencyModel::New
             (
-                pair,
+                interface(),
                 diameterProperties().subDict("coalescence")
             );
     }
@@ -552,13 +426,13 @@ void Foam::diameterModels::threeMomentLogNormal::readModels()
         breakupModel_ =
             breakupModel::New
             (
-                pair,
+                interface(),
                 diameterProperties().subDict("breakup")
             );
     }
 }
 
-void Foam::diameterModels::threeMomentLogNormal::updateModels()
+void Foam::diameterModels::threeMomentLogNormal::updateSources()
 {
     if (coalescence_ || breakup_)
     {
@@ -577,23 +451,66 @@ void Foam::diameterModels::threeMomentLogNormal::updateModels()
             updateBreakupSources(dcm, s);
         }
     }
+
+    const phaseModel& phase = this->phase();
+
+    // Break-up and coalescence
+
+    NSource_ = NBreakRate_ - NCoaRate_;
+    ASource_ = ABreakRate_ - ACoaRate_;
+
+    // Dilation
+
+    ASource_ -=
+        (1.0/3.0)
+      * (
+            (
+                fvc::ddt(phase)
+              + fvc::div(phase.alphaPhi())
+            )
+          - (
+                fvc::ddt(phase, phase.rho()())
+              + fvc::div(phase.alphaRhoPhi())
+            )
+          / phase.rho()
+        );
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::diameterModels::threeMomentLogNormal::threeMomentLogNormal
 (
-    const dictionary& diameterProperties,
+    const dictionary& dict,
     const phaseModel& phase
 )
 :
-    diameterModel(diameterProperties, phase),
+    diameterModel(dict, phase),
     mesh_(phase.mesh()),
-    p_(readScalar(diameterProperties.lookup("p"))),
-    q_(readScalar(diameterProperties.lookup("q"))),
-    closingMoment_
+    p_(readScalar(dict.lookup("p"))),
+    q_(readScalar(dict.lookup("q"))),
+    N_
     (
-        closingMomentTypeNames_[word(diameterProperties.lookup("closingMoment"))]
+        IOobject
+        (
+            IOobject::groupName("N", phase.name()),
+            mesh_.time().timeName(),
+            mesh_,
+            IOobject::MUST_READ,
+            IOobject::AUTO_WRITE
+        ),
+        phase.mesh()
+    ),
+    A_
+    (
+        IOobject
+        (
+            IOobject::groupName("A", phase.name()),
+            mesh_.time().timeName(),
+            mesh_,
+            IOobject::MUST_READ,
+            IOobject::AUTO_WRITE
+        ),
+        mesh_
     ),
     lambda_
     (
@@ -602,10 +519,11 @@ Foam::diameterModels::threeMomentLogNormal::threeMomentLogNormal
             IOobject::groupName("lambda", phase.name()),
             mesh_.time().timeName(),
             mesh_,
-            IOobject::MUST_READ,
+            IOobject::READ_IF_PRESENT,
             IOobject::AUTO_WRITE
         ),
-        phase.mesh()
+        mesh_,
+        dimensionedScalar(N_.dimensions(), 0.0)
     ),
     kappa_
     (
@@ -614,25 +532,15 @@ Foam::diameterModels::threeMomentLogNormal::threeMomentLogNormal
             IOobject::groupName("kappa", phase.name()),
             mesh_.time().timeName(),
             mesh_,
-            IOobject::MUST_READ,
+            IOobject::READ_IF_PRESENT,
             IOobject::AUTO_WRITE
         ),
-        mesh_
+        mesh_,
+        dimensionedScalar(A_.dimensions(), 0.0)
     ),
-    beta_
-    (
-        IOobject
-        (
-            IOobject::groupName("beta", phase.name()),
-            mesh_.time().timeName(),
-            mesh_,
-            IOobject::MUST_READ,
-            IOobject::AUTO_WRITE
-        ),
-        phase.mesh()
-    ),
-    dMax_("dMax", dimLength, diameterProperties),
-    dMin_("dMin", dimLength, diameterProperties),
+    dMax_("dMax", dimLength, dict),
+    dMin_("dMin", dimLength, dict),
+    nCorr_(dict.lookupOrDefault<label>("nCorr", 2)),
     d_
     (
         IOobject
@@ -643,7 +551,8 @@ Foam::diameterModels::threeMomentLogNormal::threeMomentLogNormal
             IOobject::NO_READ,
             IOobject::AUTO_WRITE
         ),
-        dsm()
+        mesh_,
+        dimensionedScalar(dimLength, 0.0)
     ),
     sigma_
     (
@@ -655,15 +564,16 @@ Foam::diameterModels::threeMomentLogNormal::threeMomentLogNormal
             IOobject::NO_READ,
             IOobject::AUTO_WRITE
         ),
-        sigma()
+        mesh_,
+        dimensionedScalar(dimless, 0.0)
     ),
-    coalescence_(diameterProperties.subDict("coalescence").lookup("active")),
-    breakup_(diameterProperties.subDict("breakup").lookup("active")),
-    lambdaCoaRate_
+    coalescence_(dict.subDict("coalescence").lookup("active")),
+    breakup_(dict.subDict("breakup").lookup("active")),
+    NCoaRate_
     (
         IOobject
         (
-            IOobject::groupName("lambdaCoaRate", phase.name()),
+            IOobject::groupName("NCoaRate", phase.name()),
             mesh_.time().timeName(),
             mesh_,
             IOobject::NO_READ,
@@ -672,11 +582,11 @@ Foam::diameterModels::threeMomentLogNormal::threeMomentLogNormal
         mesh_,
         dimensionedScalar(inv(dimTime), 0)
     ),
-    kappaCoaRate_
+    ACoaRate_
     (
         IOobject
         (
-            IOobject::groupName("kappaCoaRate", phase.name()),
+            IOobject::groupName("ACoaRate", phase.name()),
             mesh_.time().timeName(),
             mesh_,
             IOobject::NO_READ,
@@ -685,11 +595,11 @@ Foam::diameterModels::threeMomentLogNormal::threeMomentLogNormal
         mesh_,
         dimensionedScalar(inv(dimTime), 0)
     ),
-    betaCoaRate_
+    NBreakRate_
     (
         IOobject
         (
-            IOobject::groupName("betaCoaRate", phase.name()),
+            IOobject::groupName("NBreakRate", phase.name()),
             mesh_.time().timeName(),
             mesh_,
             IOobject::NO_READ,
@@ -698,11 +608,11 @@ Foam::diameterModels::threeMomentLogNormal::threeMomentLogNormal
         mesh_,
         dimensionedScalar(inv(dimTime), 0)
     ),
-    lambdaBreakRate_
+    ABreakRate_
     (
         IOobject
         (
-            IOobject::groupName("lambdaBreakRate", phase.name()),
+            IOobject::groupName("ABreakRate", phase.name()),
             mesh_.time().timeName(),
             mesh_,
             IOobject::NO_READ,
@@ -711,34 +621,37 @@ Foam::diameterModels::threeMomentLogNormal::threeMomentLogNormal
         mesh_,
         dimensionedScalar(inv(dimTime), 0)
     ),
-    kappaBreakRate_
+    NSource_
     (
         IOobject
         (
-            IOobject::groupName("kappaBreakRate", phase.name()),
+            IOobject::groupName("NSource", phase.name()),
             mesh_.time().timeName(),
             mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
         ),
-        mesh_,
+        phase.mesh(),
         dimensionedScalar(inv(dimTime), 0)
     ),
-    betaBreakRate_
+    ASource_
     (
         IOobject
         (
-            IOobject::groupName("betaBreakRate", phase.name()),
+            IOobject::groupName("ASource", phase.name()),
             mesh_.time().timeName(),
             mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
         ),
-        mesh_,
+        phase.mesh(),
         dimensionedScalar(inv(dimTime), 0)
     )
 {
-    limitMoments(false);
+    correctLimitedScaledMoments();
+
+    d_ = dsm();
+    sigma_ = sigma();
 }
 
 
@@ -752,33 +665,29 @@ Foam::diameterModels::threeMomentLogNormal::~threeMomentLogNormal()
 
 void Foam::diameterModels::threeMomentLogNormal::correct()
 {
-    const scalar pi(constant::mathematical::pi);
-
     const phaseModel& phase = this->phase();
+    const volScalarField& alpha = phase;
     const surfaceScalarField& alphaPhi = phase.alphaPhi();
-    const dimensionedScalar& residualAlpha = phase.residualAlpha();
 
-    kappa_.correctBoundaryConditions();
-    lambda_.correctBoundaryConditions();
+    // Try to find poly-celerity fluxes. Otherwise reduce to mono-celerity ones.
 
-    volScalarField R
+    const word alphaPhi0Name(IOobject::groupName("alphaPhi0", phase.name()));
+    const surfaceScalarField& alphaPhi0
     (
-        IOobject
-        (
-            "divU",
-            mesh_.time().timeName(),
-            mesh_
-        ),
-        mesh_,
-        dimensionedScalar(dimless/dimTime, 0)
+        mesh_.foundObject<surfaceScalarField>(alphaPhi0Name)
+      ? mesh_.lookupObjectRef<surfaceScalarField>(alphaPhi0Name)
+      : alphaPhi
     );
 
-    if (phase.divU().valid())
-    {
-        R = -phase.divU();
-    }
+    const word alphaPhi2Name(IOobject::groupName("alphaPhi2", phase.name()));
+    const surfaceScalarField& alphaPhi2
+    (
+        mesh_.foundObject<surfaceScalarField>(alphaPhi2Name)
+      ? mesh_.lookupObjectRef<surfaceScalarField>(alphaPhi2Name)
+      : alphaPhi
+    );
 
-    updateModels();
+    updateSources();
 
     const Foam::fvModels& fvModels(Foam::fvModels::New(phase.mesh()));
     const Foam::fvConstraints& fvConstraints
@@ -786,107 +695,45 @@ void Foam::diameterModels::threeMomentLogNormal::correct()
         Foam::fvConstraints::New(phase.mesh())
     );
 
-    // Note: the N-equation is formulated in terms of lambda (lambda =
-    // N/alpha/1e6), however, it remains proportional to ddt(N) and not
-    // ddt(lambda). The factor 1e6 drops out everywhere.
-
-    fvScalarMatrix NEqn
-    (
-        fvm::ddt(phase, lambda_)
-      + fvm::div(alphaPhi, lambda_)
-      ==
-      - fvm::SuSp(lambdaCoaRate_, lambda_)
-      - fvm::SuSp(-lambdaBreakRate_, lambda_)
-      + residualAlpha
-      * (
-            fvc::ddt(lambda_)
-          - fvm::ddt(lambda_)
-        )
-      + fvModels.source(phase, lambda_)
-    );
-
-    if (closingMoment_ == closingMomentType::interfacialArea)
+    for (int corr = 0; corr < nCorr_; corr++)
     {
+        // Use non-limited scaled moments, for stability
 
-        // Note: the ai-equation is formulated in terms of kappa (kappa =
-        // ai/alpha), however, it remains proportional to ddt(ai) and not
-        // ddt(kappa)
+        kappa_ = A_/max(alpha, phase.residualAlpha());
+        lambda_ = N_/max(alpha, phase.residualAlpha());
 
-        fvScalarMatrix aiEqn
+        fvScalarMatrix AEqn
         (
-            fvm::ddt(phase, kappa_)
-          + fvm::div(alphaPhi, kappa_)
+            fvm::ddt(A_)
+          + fvc::div(alphaPhi2, kappa_)
           ==
-          - fvm::SuSp(kappaCoaRate_, kappa_)
-          - fvm::SuSp(-kappaBreakRate_, kappa_)
-          - fvm::SuSp(2.0/3.0*R, kappa_)
-          + residualAlpha
-          * (
-                fvc::ddt(kappa_)
-              - fvm::ddt(kappa_)
-            )
-          + fvModels.source(phase, kappa_)
+          - fvm::SuSp(-ASource_, A_)
+          + fvModels.source(A_)
         );
 
-        aiEqn.relax();
+        AEqn.relax();
+        fvConstraints.constrain(AEqn);
 
-        fvConstraints.constrain(aiEqn);
+        A_ = AEqn.H()/AEqn.A();
+        A_.correctBoundaryConditions();
 
-        aiEqn.solve();
-    }
-    else
-    {
-
-        // Note: the B-equation is formulated in terms of beta (beta = B/alpha),
-        // however, it remains proportional to ddt(B) and not ddt(beta)
-
-        fvScalarMatrix BEqn
+        fvScalarMatrix NEqn
         (
-            fvm::ddt(phase, beta_)
-          + fvm::div(alphaPhi, beta_)
+            fvm::ddt(N_)
+          + fvc::div(alphaPhi0, lambda_)
           ==
-          - fvm::SuSp(betaCoaRate_, beta_)
-          - fvm::SuSp(-betaBreakRate_, beta_)
-          - fvm::SuSp(2.0*R, beta_)
-          + residualAlpha
-          * (
-                fvc::ddt(beta_)
-              - fvm::ddt(beta_)
-            )
-          + fvModels.source(phase, beta_)
+          - fvm::SuSp(-NSource_, N_)
+          + fvModels.source(N_)
         );
 
-        BEqn.relax();
+        NEqn.relax();
+        fvConstraints.constrain(NEqn);
 
-        fvConstraints.constrain(BEqn);
-
-        BEqn.solve();
+        N_ = NEqn.H()/NEqn.A();
+        N_.correctBoundaryConditions();
     }
 
-    // Solve the N-equation after the ai- or B-equation has been formulated and
-    // solved, for consistency
-
-    NEqn.relax();
-
-    fvConstraints.constrain(NEqn);
-
-    NEqn.solve();
-
-    limitMoments();
-
-    if (closingMoment_ == closingMomentType::interfacialArea)
-    {
-        beta_ = pi*pow(6,8)*sqr(1e6*lambda_)/pow(kappa_, 9);
-    }
-    else
-    {
-        kappa_ =
-            pow
-            (
-                pi*pow(6,8)*sqr(1e6*lambda_)/beta_,
-                1.0/9.0
-            );
-    }
+    correctLimitedScaledMoments();
 
     d_ = dsm();
     sigma_ = sigma();
@@ -901,9 +748,11 @@ Foam::diameterModels::threeMomentLogNormal::d() const
 Foam::tmp<Foam::volScalarField>
 Foam::diameterModels::threeMomentLogNormal::a() const
 {
+    // Instead of returning the interfacial area directly, we return the scaled
+    // one which is limited
+
     return phase()*kappa_;
 }
-
 
 bool Foam::diameterModels::threeMomentLogNormal::read
 (
@@ -916,6 +765,54 @@ bool Foam::diameterModels::threeMomentLogNormal::read
     diameterProperties().lookup("dMin") >> dMin_;
 
     return true;
+}
+
+const Foam::phaseModel&
+Foam::diameterModels::threeMomentLogNormal::continuousPhase() const
+{
+    return
+        mesh_.lookupObject<phaseModel>
+        (
+            IOobject::groupName
+            (
+                "alpha",
+                diameterProperties().lookup("continuousPhase")
+            )
+        );
+}
+
+Foam::dispersedPhaseInterface
+Foam::diameterModels::threeMomentLogNormal::interface() const
+{
+    return dispersedPhaseInterface(phase(), continuousPhase());
+}
+
+const Foam::phaseCompressible::momentumTransportModel&
+Foam::diameterModels::threeMomentLogNormal::continuousTurbulence() const
+{
+    return
+        mesh_.lookupObject<phaseCompressible::momentumTransportModel>
+        (
+            IOobject::groupName
+            (
+                momentumTransportModel::typeName,
+                continuousPhase().name()
+            )
+        );
+}
+
+const Foam::phaseCompressible::momentumTransportModel&
+Foam::diameterModels::threeMomentLogNormal::dispersedTurbulence() const
+{
+    return
+        mesh_.lookupObject<phaseCompressible::momentumTransportModel>
+        (
+            IOobject::groupName
+            (
+                momentumTransportModel::typeName,
+                phase().name()
+            )
+        );
 }
 
 // ************************************************************************* //

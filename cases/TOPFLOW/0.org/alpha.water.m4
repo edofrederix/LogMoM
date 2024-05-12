@@ -1,0 +1,46 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      alpha.water;
+}
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 1;
+
+boundaryField
+{
+    walls
+    {
+        type            zeroGradient;
+    }
+    inlet
+    {
+        type            TOPFLOWAlphaInlet;
+        average         VARALPHAWATERIN;
+        case            VARCASE;
+        phase           water;
+    }
+    outlet
+    {
+        type            inletOutlet;
+        phi             phi.water;
+        inletValue      $internalField;
+        value           $internalField;
+    }
+    axis
+    {
+        type            empty;
+    }
+    wedgeFront
+    {
+        type            wedge;
+    }
+    wedgeBack
+    {
+        type            wedge;
+    }
+}

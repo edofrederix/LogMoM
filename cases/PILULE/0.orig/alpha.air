@@ -1,0 +1,32 @@
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    object      alpha.air;
+}
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0.166;
+
+boundaryField
+{
+    inlet
+    {
+        type            fixedValue;
+        value           $internalField;
+    }
+
+    outlet
+    {
+        type            inletOutlet;
+        phi             phi.air;
+        inletValue      uniform 0;
+        value           $internalField;
+    }
+
+    "wall.*"
+    {
+        type            zeroGradient;
+    }
+}

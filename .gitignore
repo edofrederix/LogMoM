@@ -42,7 +42,6 @@ log.*
 .nfs*
 
 # Paraview stubs
-*.foam
 *.OpenFOAM
 
 # TextMate
@@ -60,3 +59,16 @@ log.*
 [0-9][0-9][0-9]
 [0-9][0-9][0-9][0-9]
 [0-9][0-9][0-9][0-9][0-9]
+
+# Python
+__pycache__
+
+# OpenFOAM parallel data
+processor[0-9]
+processor[0-9][0-9]
+processor[0-9][0-9][0-9]
+processor[0-9][0-9][0-9][0-9]
+processor[0-9][0-9][0-9][0-9][0-9]
+
+# OpenFOAM mesh
+polyMesh

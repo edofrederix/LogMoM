@@ -1,0 +1,16 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      momentumTransport.water;
+}
+
+simulationType  RAS;
+
+RAS
+{
+    model    kOmegaSSTSato;
+
+    turbulence      on;
+    printCoeffs     on;
+}

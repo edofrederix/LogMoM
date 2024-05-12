@@ -6,6 +6,11 @@ namespace Foam
 {
     defineTypeNameAndDebug(coalescenceFrequencyModel, 0);
     defineRunTimeSelectionTable(coalescenceFrequencyModel, dictionary);
+
+    const word coalescenceFrequencyModel::coeffsDictName_
+    (
+        "CoaFreqCoeffs"
+    );
 }
 
 // * * * * * * * * * * * * * * * * Selector  * * * * * * * * * * * * * * * * //
@@ -47,7 +52,7 @@ Foam::coalescenceFrequencyModel::coalescenceFrequencyModel
 )
 :
     pair_(pair.dispersed(), pair.continuous()),
-    dict_(dict)
+    coeffs_(dict)
 {}
 
 

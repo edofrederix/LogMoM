@@ -41,8 +41,6 @@ bubbles
         p               3;
         q               2;
 
-        closingMoment   interfacialArea;
-
         coalescence
         {
             active      false;
@@ -53,8 +51,12 @@ bubbles
             active      true;
 
             type        polynomial;
-            B           (VARBREAKRATE1 VARBREAKRATE2);
-            r0          (VARR1 VARR2);
+
+            polynomialBreakCoeffs
+            {
+                B       (VARBREAKRATE1 VARBREAKRATE2);
+                p       (VARR1 VARR2);
+            }
 
             GaussHermite    VARNGH;
             GaussLegendre   VARNGH;

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Run from this directory
+cd "${0%/*}" || exit 1
+
+# Source clean functions
+. $WM_PROJECT_DIR/bin/tools/CleanFunctions
+
+cleanCase && rm -f *.eps && rm -fr 0

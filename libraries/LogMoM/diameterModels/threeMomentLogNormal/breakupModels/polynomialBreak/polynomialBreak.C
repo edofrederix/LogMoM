@@ -24,21 +24,25 @@ Foam::breakupModels::polynomialBreak::polynomialBreak
     const dictionary& dict
 )
 :
-    breakupModel(pair, dict),
-    B_(dict.lookup("B")),
-    r_(dict.lookup("r0"))
+    breakupModel
+    (
+        pair,
+        dict.subDict(this->type() + this->coeffsDictName_)
+    ),
+    B_(coeffs_.lookup("B")),
+    p_(coeffs_.lookup("p"))
 {
-    if (B_.size() != r_.size())
+    if (B_.size() != p_.size())
     {
         FatalErrorInFunction
-            << "Lists B and r must have equal length"
+            << "Lists B and p must have equal length"
             << abort(FatalError);
     }
 
     if (B_.size() == 0)
     {
         FatalErrorInFunction
-            << "Lists B and r should have at least one entry"
+            << "Lists B and p should have at least one entry"
             << abort(FatalError);
     }
 }
@@ -79,15 +83,15 @@ Foam::tmp<Foam::volScalarField> Foam::breakupModels::polynomialBreak::binaryRate
 
     for (label i = 0; i < B_.size(); i++)
     {
-        const scalar r(r_[i]);
+        const scalar p(p_[i]);
 
         const dimensionedScalar B
         (
-            R.dimensions()/pow(dimLength,r)*dimVolume,
+            R.dimensions()/pow(dimLength,p)*dimVolume,
             B_[i]
         );
 
-        R += 2.0/v1*B*pow(d1,r);
+        R += 2.0/v1*B*pow(d1,p);
     }
 
     return tR;

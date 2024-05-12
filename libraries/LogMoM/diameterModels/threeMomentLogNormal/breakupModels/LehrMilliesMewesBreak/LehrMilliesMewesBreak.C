@@ -30,12 +30,16 @@ Foam::breakupModels::LehrMilliesMewesBreak::LehrMilliesMewesBreak
     const dictionary& dict
 )
 :
-    breakupModel(pair, dict),
+    breakupModel
+    (
+        pair,
+        dict.subDict(this->type() + this->coeffsDictName_)
+    ),
     sigma_
     (
         "sigma",
         dimMass/sqr(dimTime),
-        dict
+        coeffs_
     )
 {}
 

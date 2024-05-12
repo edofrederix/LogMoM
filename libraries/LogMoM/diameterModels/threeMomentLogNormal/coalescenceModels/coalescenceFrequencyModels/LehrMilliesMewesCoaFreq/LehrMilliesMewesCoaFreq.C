@@ -33,14 +33,18 @@ Foam::coalescenceFrequencyModels::LehrMilliesMewesCoaFreq
     const dictionary& dict
 )
 :
-    coalescenceFrequencyModel(pair, dict),
+    coalescenceFrequencyModel
+    (
+        pair,
+        dict.subDict(this->type() + this->coeffsDictName_)
+    ),
     uCrit_
     (
-        dimensionedScalar::lookupOrDefault("uCrit", dict, dimVelocity, 0.08)
+        dimensionedScalar::lookupOrDefault("uCrit", coeffs_, dimVelocity, 0.08)
     ),
     alphaMax_
     (
-        dimensionedScalar::lookupOrDefault("alphaMax", dict, dimless, 0.6)
+        dimensionedScalar::lookupOrDefault("alphaMax", coeffs_, dimless, 0.6)
     )
 {}
 

@@ -23,7 +23,11 @@ Foam::breakupModels::noBreak::noBreak
     const dictionary& dict
 )
 :
-    breakupModel(pair, dict)
+    breakupModel
+    (
+        pair,
+        dict.subDict(this->type() + this->coeffsDictName_)
+    )
 {}
 
 

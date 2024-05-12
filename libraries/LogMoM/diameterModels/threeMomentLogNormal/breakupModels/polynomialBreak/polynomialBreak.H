@@ -25,7 +25,7 @@ class polynomialBreak
         List<scalar> B_;
 
         //- Polynomial powers
-        List<scalar> r_;
+        List<scalar> p_;
 
 public:
 

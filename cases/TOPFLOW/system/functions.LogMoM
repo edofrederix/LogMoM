@@ -1,0 +1,130 @@
+// Inlet moment fluxes [m^gamma/s]
+
+inletPhiN
+{
+    type            surfaceFieldValue;
+    regionType      patch;
+    name            inlet;
+    fields          (N.air);
+    operation       sum;
+    weightField     phi0.air;
+    writeControl    writeTime;
+    writeFields     false;
+}
+
+inletPhiA
+{
+    type            surfaceFieldValue;
+    regionType      patch;
+    name            inlet;
+    fields          (A.air);
+    operation       sum;
+    weightField     phi2.air;
+    writeControl    writeTime;
+    writeFields     false;
+}
+
+inletPhiAlpha
+{
+    type            surfaceFieldValue;
+    regionType      patch;
+    name            inlet;
+    fields          (alpha.air);
+    operation       sum;
+    weightField     phi.air;
+    writeControl    writeTime;
+    writeFields     false;
+}
+
+// Outlet moment fluxes [m^gamma/s]
+
+outletPhiN
+{
+    type            surfaceFieldValue;
+    regionType      patch;
+    name            outlet;
+    fields          (N.air);
+    operation       sum;
+    weightField     phi0.air;
+    writeControl    writeTime;
+    writeFields     false;
+}
+
+outletPhiA
+{
+    type            surfaceFieldValue;
+    regionType      patch;
+    name            outlet;
+    fields          (A.air);
+    operation       sum;
+    weightField     phi2.air;
+    writeControl    writeTime;
+    writeFields     false;
+}
+
+outletPhiAlpha
+{
+    type            surfaceFieldValue;
+    regionType      patch;
+    name            outlet;
+    fields          (alpha.air);
+    operation       sum;
+    weightField     phi.air;
+    writeControl    writeTime;
+    writeFields     false;
+}
+
+// Inlet fluxes [m^3/s]
+
+inletPhi
+{
+    type            surfaceFieldValue;
+    regionType      patch;
+    name            inlet;
+    fields          (phi0.air phi2.air phi.air);
+    operation       sum;
+    writeControl    writeTime;
+    writeFields     false;
+}
+
+// Outlet fluxes [m^3/s]
+
+outletPhi
+{
+    type            surfaceFieldValue;
+    regionType      patch;
+    name            outlet;
+    fields          (phi0.air phi2.air phi.air);
+    operation       sum;
+    writeControl    writeTime;
+    writeFields     false;
+}
+
+// Forces
+
+forces0
+{
+    type            LogMoMPolyForces;
+    phase           air;
+    gamma           0;
+    executeControl  writeTime;
+    writeControl    writeTime;
+}
+
+forces2
+{
+    type            LogMoMPolyForces;
+    phase           air;
+    gamma           2;
+    executeControl  writeTime;
+    writeControl    writeTime;
+}
+
+forces3
+{
+    type            LogMoMPolyForces;
+    phase           air;
+    gamma           3;
+    executeControl  writeTime;
+    writeControl    writeTime;
+}

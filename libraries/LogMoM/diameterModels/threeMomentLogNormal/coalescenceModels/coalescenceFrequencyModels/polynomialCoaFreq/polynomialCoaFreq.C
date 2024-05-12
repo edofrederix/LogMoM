@@ -28,10 +28,14 @@ Foam::coalescenceFrequencyModels::polynomialCoaFreq::polynomialCoaFreq
     const dictionary& dict
 )
 :
-    coalescenceFrequencyModel(pair, dict),
-    K_(dict.subDict("polynomialFrequencyCoeffs").lookup("K")),
-    p_(dict.subDict("polynomialFrequencyCoeffs").lookup("p")),
-    q_(dict.subDict("polynomialFrequencyCoeffs").lookup("q"))
+     coalescenceFrequencyModel
+    (
+        pair,
+        dict.subDict(this->type() + this->coeffsDictName_)
+    ),
+    K_(coeffs_.lookup("K")),
+    p_(coeffs_.lookup("p")),
+    q_(coeffs_.lookup("q"))
 {
     if (K_.size() != p_.size() || K_.size() != q_.size())
     {

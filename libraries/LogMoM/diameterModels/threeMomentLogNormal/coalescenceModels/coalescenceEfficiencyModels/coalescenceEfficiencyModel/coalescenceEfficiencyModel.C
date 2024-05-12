@@ -7,6 +7,8 @@ namespace Foam
 {
     defineTypeNameAndDebug(coalescenceEfficiencyModel, 0);
     defineRunTimeSelectionTable(coalescenceEfficiencyModel, dictionary);
+
+    const word coalescenceEfficiencyModel::coeffsDictName_("CoaEffCoeffs");
 }
 
 // * * * * * * * * * * * * * * * * Selector  * * * * * * * * * * * * * * * * //
@@ -48,7 +50,7 @@ Foam::coalescenceEfficiencyModel::coalescenceEfficiencyModel
 )
 :
     pair_(pair.dispersed(), pair.continuous()),
-    dict_(dict)
+    coeffs_(dict)
 {}
 
 

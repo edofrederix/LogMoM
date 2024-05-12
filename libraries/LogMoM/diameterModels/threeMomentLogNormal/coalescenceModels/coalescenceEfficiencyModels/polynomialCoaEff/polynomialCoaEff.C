@@ -28,10 +28,14 @@ Foam::coalescenceEfficiencyModels::polynomialCoaEff::polynomialCoaEff
     const dictionary& dict
 )
 :
-    coalescenceEfficiencyModel(pair, dict),
-    K_(dict.subDict("polynomialEfficiencyCoeffs").lookup("K")),
-    p_(dict.subDict("polynomialEfficiencyCoeffs").lookup("p")),
-    q_(dict.subDict("polynomialEfficiencyCoeffs").lookup("q"))
+    coalescenceEfficiencyModel
+    (
+        pair,
+        dict.subDict(this->type() + this->coeffsDictName_)
+    ),
+    K_(coeffs_.lookup("K")),
+    p_(coeffs_.lookup("p")),
+    q_(coeffs_.lookup("q"))
 {
     if (K_.size() != p_.size() || K_.size() != q_.size())
     {

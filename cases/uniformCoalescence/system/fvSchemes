@@ -24,10 +24,10 @@ divSchemes
     "div\(phi,alpha.*\)"            Gauss vanLeer;
     "div\(phir,alpha.*\)"           Gauss vanLeer;
 
-    "div\(alphaPhi.*,(kappa|lambda|beta).*\)"
+    "div\(alphaPhi.*,(kappa|lambda).*\)"
                                     Gauss vanLeer;
 
-    "div\(F(0|2|6)Phi.*,(kappa|lambda|beta).*\)"
+    "div\(F(0|2|6)Phi.*,(kappa|lambda).*\)"
                                     Gauss vanLeer;
 
     "div\(alphaRhoPhi.*,U.*\)"      Gauss limitedLinearV 1;

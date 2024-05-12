@@ -1,0 +1,67 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+
+ddtSchemes
+{
+    default         Euler;
+    "ddt\(U.*\)"    backward;
+}
+
+gradSchemes
+{
+    default         Gauss linear;
+    limited         cellLimited Gauss linear 1;
+}
+
+divSchemes
+{
+    default                         none;
+
+    "div\(phi.*,alpha.*\)"          Gauss upwind;
+    "div\(alphaPhi.*,(f|kappa|lambda).*\)"
+                                    Gauss upwind;
+    "div\(alphaRhoPhi.*,(kappa|lambda).*\)"
+                                    Gauss upwind;
+
+    "div\(phi.*,U.*\)"              Gauss linearUpwind limited;
+    "div\(alphaRhoPhi.*,U.*\)"      Gauss linearUpwind limited;
+    "div\(alpha(Lambda|Kappa)RhoPhi.*,U[02]?.*\)"
+                                    Gauss linearUpwind limited;
+
+    "div\(alphaPhi.*,(h|e).*\)"     Gauss linearUpwind limited;
+    "div\(alphaRhoPhi.*,K.*\)"      Gauss linearUpwind limited;
+    "div\(alphaPhi.*,p\)"           Gauss linearUpwind limited;
+
+    "div\(alphaRhoPhi.*,(k|epsilon|omega).*\)"
+                                    Gauss linearUpwind limited;
+
+    "div\(\(\(\((N|A|alpha).*\*thermo:rho.*\)\*nuEff.*\)\*dev2\(T\(grad\(U.*\)\)\)\)\)"
+                                    Gauss linear;
+}
+
+laplacianSchemes
+{
+    default         Gauss linear corrected;
+}
+
+interpolationSchemes
+{
+    default         linear;
+}
+
+snGradSchemes
+{
+    default         corrected;
+}
+
+wallDist
+{
+    method          Poisson;
+    nRequired       true;
+}

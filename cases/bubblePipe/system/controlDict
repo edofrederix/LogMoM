@@ -1,0 +1,102 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+
+application         multiphaseEulerFoam;
+
+startFrom           latestTime;
+
+startTime           0;
+
+stopAt              endTime;
+
+endTime             4;
+
+deltaT              1e-4;
+
+writeControl        adjustableRunTime;
+
+writeInterval       0.5;
+
+purgeWrite          0;
+
+writeFormat         ascii;
+
+writePrecision      6;
+
+writeCompression    uncompressed;
+
+timeFormat          general;
+
+timePrecision       6;
+
+runTimeModifiable   yes;
+
+adjustTimeStep      yes;
+
+maxCo               0.4;
+
+maxDeltaT           1;
+
+libs
+(
+    "libLogMoM.so"
+);
+
+functions
+{
+    #includeFunc    residuals(p_rgh, k.water, omega.water)
+
+    diameter02
+    {
+        type    threeMomentLogNormalDiameter;
+        p       0;
+        q       2;
+        phase   air;
+    }
+
+    diameter22
+    {
+        type    threeMomentLogNormalDiameter;
+        p       2;
+        q       2;
+        phase   air;
+    }
+
+    diameter32
+    {
+        type    threeMomentLogNormalDiameter;
+        p       3;
+        q       2;
+        phase   air;
+    }
+
+    sigma
+    {
+        type    threeMomentLogNormalSigma;
+        phase   air;
+    }
+
+    #includeFunc    graphUniform
+    (
+        funcName=graph,
+        start=(0 0 0.89),
+        end=(0.025 0 0.89),
+        nPoints=100,
+        fields=
+        (
+            d(0,2).air
+            d(2,2).air
+            d(3,2).air
+            sigma.air
+            alpha.air
+            U.air
+            U0.air
+            U2.air
+        )
+    )
+
+}

@@ -12,25 +12,24 @@ solvers
     "alpha.*"
     {
         nAlphaCorr      1;
-        nMomentCorr     1;
-        nAlphaSubCycles 1;
+        nAlphaSubCycles 2;
     }
 
-    bubbles
+    air
     {
         nCorr                1;
-        tolerance            1e-6;
+        tolerance            1e-4;
         scale                true;
+        solveOnFinalIterOnly false;
         sourceUpdateInterval 1;
-        solveOnFinalIterOnly true;
     }
 
     p_rgh
     {
         solver          GAMG;
         smoother        DIC;
-        tolerance       1e-6;
-        relTol          0.001;
+        tolerance       1e-8;
+        relTol          1e-3;
     }
 
     p_rghFinal
@@ -39,7 +38,7 @@ solvers
         relTol          0;
     }
 
-    "(U|kappa|lambda).*"
+    "(U|N|A).*"
     {
         solver          smoothSolver;
         smoother        symGaussSeidel;
@@ -60,8 +59,8 @@ solvers
     {
         solver          smoothSolver;
         smoother        symGaussSeidel;
-        tolerance       1e-6;
-        relTol          0;
+        tolerance       0;
+        relTol          1e-5;
         minIter         1;
     }
 
@@ -80,6 +79,11 @@ solvers
         tolerance       1e-10;
         relTol          0;
     }
+
+    yPsiFinal
+    {
+        $yPsi;
+    }
 }
 
 PIMPLE
@@ -87,5 +91,5 @@ PIMPLE
     nOuterCorrectors    1;
     nCorrectors         2;
     nNonOrthogonalCorrectors 0;
-    faceMomentum        true;
+    faceMomentum        false;
 }

@@ -11,6 +11,16 @@
 
 namespace Foam
 {
+
+// Forward declaration
+class LogMoMInterfacialModel;
+
+namespace functionObjects
+{
+    class threeMomentLogNormalDiameter;
+    class threeMomentLogNormalSigma;
+}
+
 namespace diameterModels
 {
 
@@ -22,22 +32,6 @@ class threeMomentLogNormal
 :
     public diameterModel
 {
-public:
-
-    // Public data types
-
-        //- Scale transfer type enumerations
-        enum class closingMomentType
-        {
-            interfacialArea,
-            squaredVolume
-        };
-
-        //- Closing moment type names
-        static const NamedEnum<closingMomentType, 2> closingMomentTypeNames_;
-
-private:
-
     // Private data
 
         //- Mesh
@@ -47,23 +41,26 @@ private:
         scalar p_;
         scalar q_;
 
-        //- Additional moment used to close the log-normal size distribution
-        closingMomentType closingMoment_;
+        //- Number concentration (per cm^3)
+        volScalarField N_;
 
-        //- Scaled bubble number concentration (per cm^3, to avoid large numbers!)
+        //- Interfacial area
+        volScalarField A_;
+
+        //- Limited and scaled number concentration (per cm^3)
         volScalarField lambda_;
 
-        //- Scaled interfacial area concentration
+        //- Limited and scaled interfacial area
         volScalarField kappa_;
 
-        //- Scaled squared volume concentration
-        volScalarField beta_;
-
-        //- Maximum diameter used for stabilisation
+        //- Maximum diameter used for stabilization
         dimensionedScalar dMax_;
 
-        //- Minimum diameter used for stabilisation
+        //- Minimum diameter used for stabilization
         dimensionedScalar dMin_;
+
+        //- Number of correctors. Defaults to 2.
+        label nCorr_;
 
         //- The Sauter-mean diameter of the phase
         volScalarField d_;
@@ -77,23 +74,17 @@ private:
         //- Breakup switch
         Switch breakup_;
 
-        //- Scaled number concentration coalescence rate
-        volScalarField lambdaCoaRate_;
+        //- Number concentration coalescence rate
+        volScalarField NCoaRate_;
 
-        //- Scaled interfacial area concentration coalescence rate
-        volScalarField kappaCoaRate_;
+        //- Interfacial area concentration coalescence rate
+        volScalarField ACoaRate_;
 
-        //- Scaled squared volume concentration coalescence rate
-        volScalarField betaCoaRate_;
+        //- Number concentration breakage rate
+        volScalarField NBreakRate_;
 
-        //- Scaled number concentration breakage rate
-        volScalarField lambdaBreakRate_;
-
-        //- Scaled interfacial area concentration breakage rate
-        volScalarField kappaBreakRate_;
-
-        //- Scaled squared volume concentration breakage rate
-        volScalarField betaBreakRate_;
+        //- Interfacial area concentration breakage rate
+        volScalarField ABreakRate_;
 
         //- Coalescence efficiency model
         autoPtr<coalescenceEfficiencyModel> coaEffModel_;
@@ -104,8 +95,19 @@ private:
         //- Breakup model
         autoPtr<breakupModel> breakupModel_;
 
+        //- Fields to store the right-hand side implicit source term
+        //  coefficients
+        volScalarField NSource_;
+        volScalarField ASource_;
 
-    // Private member functions
+
+protected:
+
+    // Protected member functions
+
+        //- Correct the scaled moments from the unscaled ones and apply
+        //  realizability limiters.
+        void correctLimitedScaledMoments();
 
         //- Compute the Sauter mean diameter
         tmp<volScalarField> dsm() const;
@@ -138,12 +140,7 @@ private:
         virtual void readModels();
 
         //- Update the models
-        virtual void updateModels();
-
-        //- Limit moments so that mean diameters are in [dMin,dMax]. Option to
-        //  prevent the boundary condition update, which is needed when using
-        //  this function in the constructor
-        virtual void limitMoments(bool = true);
+        virtual void updateSources();
 
 public:
 
@@ -156,7 +153,7 @@ public:
         //- Construct from components
         threeMomentLogNormal
         (
-            const dictionary& diameterProperties,
+            const dictionary& dict,
             const phaseModel& phase
         );
 
@@ -168,34 +165,65 @@ public:
     // Member Functions
 
         //- Return the local fields
-        volScalarField& kappa()
+
+        inline volScalarField& N()
+        {
+            return N_;
+        }
+
+        inline const volScalarField& N() const
+        {
+            return N_;
+        }
+
+        inline volScalarField& A()
+        {
+            return A_;
+        }
+
+        inline const volScalarField& A() const
+        {
+            return A_;
+        }
+
+        inline volScalarField& kappa()
         {
             return kappa_;
         }
 
-        const volScalarField& kappa() const
+        inline const volScalarField& kappa() const
         {
             return kappa_;
         }
 
-        volScalarField& lambda()
+        inline volScalarField& lambda()
         {
             return lambda_;
         }
 
-        const volScalarField& lambda() const
+        inline const volScalarField& lambda() const
         {
             return lambda_;
         }
 
-        volScalarField& beta()
+        inline const volScalarField& NSource() const
         {
-            return beta_;
+            return NSource_;
         }
 
-        const volScalarField& beta() const
+        inline const volScalarField& ASource() const
         {
-            return beta_;
+            return ASource_;
+        }
+
+        inline const dimensionedScalar& dMin() const
+        {
+            return dMin_;
+        }
+
+        inline const dimensionedScalar& dMax() const
+        {
+            return dMax_;
         }
 
         //- Evolve the moment transport equations
@@ -204,10 +232,32 @@ public:
         //- Get the diameter field
         virtual tmp<volScalarField> d() const;
 
+        //- Interfacial area
         virtual tmp<volScalarField> a() const;
 
         //- Read phaseProperties dictionary
         virtual bool read(const dictionary& phaseProperties);
+
+        //- Return reference to the continuous phase
+        const phaseModel& continuousPhase() const;
+
+        //- Return the dispersed interface
+        dispersedPhaseInterface interface() const;
+
+        //- Return reference to turbulence model of the continuous phase
+        const phaseCompressible::momentumTransportModel&
+            continuousTurbulence() const;
+
+        //- Return reference to turbulence model of the dispersed phase
+        const phaseCompressible::momentumTransportModel&
+            dispersedTurbulence() const;
+
+        //- Befriend LogMoM interfacial model
+        friend class Foam::LogMoMInterfacialModel;
+
+        //- Befriend function objects
+        friend class functionObjects::threeMomentLogNormalDiameter;
+        friend class functionObjects::threeMomentLogNormalSigma;
 
 };
 

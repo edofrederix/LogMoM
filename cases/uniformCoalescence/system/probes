@@ -13,9 +13,8 @@ probes
 
     fields
     (
-        lambda.bubbles
-        kappa.bubbles
+        N.bubbles
+        A.bubbles
         alpha.bubbles
-        beta.bubbles
     );
 }

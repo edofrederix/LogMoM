@@ -32,11 +32,11 @@ int main(int argc, char *argv[])
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    volScalarField lambda
+    volScalarField alpha
     (
         IOobject
         (
-            IOobject::groupName("lambda", alphaName),
+            IOobject::groupName("alpha", alphaName),
             runTime.timeName(),
             mesh,
             IOobject::MUST_READ,
@@ -45,55 +45,41 @@ int main(int argc, char *argv[])
         mesh
     );
 
-    volScalarField kappa
+    volScalarField N
     (
         IOobject
         (
-            IOobject::groupName("kappa", alphaName),
+            IOobject::groupName("N", alphaName),
             runTime.timeName(),
             mesh,
-            IOobject::READ_IF_PRESENT,
+            IOobject::MUST_READ,
             IOobject::AUTO_WRITE
         ),
-        mesh,
-        dimensionedScalar(dimArea/dimVolume, 0.0)
+        mesh
     );
 
-    volScalarField beta
+    volScalarField A
     (
         IOobject
         (
-            IOobject::groupName("beta", alphaName),
+            IOobject::groupName("A", alphaName),
             runTime.timeName(),
             mesh,
-            IOobject::READ_IF_PRESENT,
+            IOobject::MUST_READ,
             IOobject::AUTO_WRITE
         ),
-        mesh,
-        dimensionedScalar(sqr(dimVolume)/dimVolume, 0.0)
+        mesh
     );
-
-    if (kappa.headerOk() == 0 && beta.headerOk() == 0)
-    {
-        WarningInFunction
-            << "Both the kappa and beta field are not present. "
-            << "At least one of them should be present."
-            << endl;
-    }
 
     const scalar pi(constant::mathematical::pi);
 
     // The scaled number concentration is per cm^3
 
-    lambda = 6.0/pi/pow(dsm,3.0)*exp(3.0*sqr(sigma))/1e6;
+    N = 6.0*alpha/pi/pow(dsm,3.0)*exp(3.0*sqr(sigma))/1e6;
+    A = 6.0*alpha/dsm;
 
-    kappa = 6.0/dsm;
-
-    beta = 6.0/pi*pow(dsm,3.0)*exp(6.0*sqr(sigma));
-
-    lambda.write();
-    kappa.write();
-    beta.write();
+    N.write();
+    A.write();
 
     Info<< "end" << endl;
 

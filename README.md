@@ -48,16 +48,16 @@ multiphaseEulerFoam
 </pre>
 
 * The prep shell scripts set up the case by configuring the required
-  parameters. Those parameters are defined at the top of each prep shell
-  script, and can be changed by the user.
-* The TOPFLOW case can also be run in parallel, with
+  parameters. Some prep scripts require arguments to be specified.
+* For example, the TOPFLOW case can also be run in parallel, with
 
 <pre>
-./prep.sh
-decomposePar
+./prep.sh A 16 logmom false
 mpirun -np 8 multiphaseEulerFoam -parallel
 </pre>
 
+* This runs TOPFLOW case A on a mesh with 16 cells across the radius using
+  logmom without poly-celerity.
 * After running the uniformCoalescence and uniformBreakup cases, pdf
   plots can be generated with
 
@@ -83,13 +83,28 @@ libs
 to your case's `system/controlDict` file. Next, you can select the
 `threeMomentLogNormal` model as a `diameterModel` for each phase, in the
 `constant/phaseProperties` file. Note that this works only with the
-`multiphaseEulerFoam` solver (in OpenFOAM-10). Additional parameters,
-such as the coalescence and break-up models to use, must be provided as
-well. An example is given in
-`cases/TOPFLOW/constant/phaseProperties.LOGMOM`. Finally, your case
-should provide initial and boundary conditions for the `lambda.<phase>`
-and `kappa.<phase>` fields, which are the void-fraction-scaled zeroth and
-second diameter-based moments of the size distribution of phase `<phase>`.
+`multiphaseEulerFoam` solver (in OpenFOAM-10). Additional parameters, such as
+the coalescence and break-up models to use, must be provided as well. An example
+is given in `cases/TOPFLOW/constant/phaseProperties.LogMoM.m4`. Finally, your
+case should provide initial and boundary conditions for the `N.<phase>` and
+`A.<phase>` fields, which are the zeroth and second diameter-based moments of
+the size distribution of phase `<phase>`. Refer to the cases in `cases/` for
+examples.
+
+## References
+
+* Frederix, E.M.A., Cox, T.L.W., Kuerten, J.G.M., & Komen, E.M.J. (2019).
+  Poly-dispersed modeling of bubbly flow using the log-normal size distribution.
+  *Chemical Engineering Science*, 201, 237-246.
+* Habiyaremye, V., Komen, E.M.J., Kuerten, J.G.M., & Frederix, E.M.A. (2022).
+  Modeling of bubble coalescence and break-up using the Log-normal Method of
+  Moments. *Chemical Engineering Science*, 253, 117577.
+* Habiyaremye, V., Kuerten, J.G.M., & Frederix, E.M.A. (2023). Comparison of
+  population balance models for polydisperse bubbly flow. *Chemical Engineering
+  Science*, 278, 118932.
+* Frederix, E.M.A., Habiyaremye, V., Tajfirooz, S., & Kuerten, J.G.M. (2024).
+  Extension of the two-fluid model to bubble size distribution moment
+  velocities. *Experimental and Computational Multiphase Flow*, submitted.
 
 ## Contact & support
 

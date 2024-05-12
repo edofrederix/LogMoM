@@ -5,27 +5,30 @@ source $FOAM_SRC/../bin/tools/CleanFunctions
 
 # Parameters -------------------------------------------------------------------
 
-# Case type (R0, R1, R2, R3 or R4)
+CASE=$1
 
-CASE=R4
+if [[ ! "$CASE" =~ ^R[0-4]?$ ]]; then
 
-# Number of quadrature points (5, 10 or 20)
+    echo "Invalid case. Case should be R0, R1, R2, R3 or R4."
+    exit
 
-NGH=20
+fi
 
-# ------------------------------------------------------------------------------
+NGH=5
 
 ALPHA=0.1
 SIGMA=1.0
 DSM=1e-3
 
+# ------------------------------------------------------------------------------
+
 MATH="import math as m"
 
 # The zeroth, second and third moment
 
-N0=$(echo "$MATH; print($ALPHA*6.0/m.pi/$DSM**3.0*m.exp(3.0*$SIGMA**2.0))" | python3)
-S0=$(echo "$MATH; print($ALPHA*6.0/m.pi/$DSM)" | python3)
-A0=$(echo "$MATH; print($ALPHA*6.0/m.pi)" | python3)
+M0=$(echo "$MATH; print($ALPHA*6.0/m.pi/$DSM**3.0*m.exp(3.0*$SIGMA**2.0))" | python3)
+M2=$(echo "$MATH; print($ALPHA*6.0/m.pi/$DSM)" | python3)
+M3=$(echo "$MATH; print($ALPHA*6.0/m.pi)" | python3)
 
 # Read the case
 
@@ -42,7 +45,7 @@ case $CASE in
 
         ;;
     R1)
-        BREAKRATE1=$(echo "print(($N0/$A0)**(1.0/3.0))" | python3)
+        BREAKRATE1=$(echo "print(($M0/$M3)**(1.0/3.0))" | python3)
         BREAKRATE2=""
 
         R1=1
@@ -52,7 +55,7 @@ case $CASE in
 
         ;;
     R2)
-        BREAKRATE1=$(echo "print($N0/$A0)" | python3)
+        BREAKRATE1=$(echo "print($M0/$M3)" | python3)
         BREAKRATE2=""
 
         R1=3
@@ -63,7 +66,7 @@ case $CASE in
         ;;
     R3)
         BREAKRATE1=1.0
-        BREAKRATE2=$(echo "print(($N0/$A0)**(1.0/3.0))" | python3)
+        BREAKRATE2=$(echo "print(($M0/$M3)**(1.0/3.0))" | python3)
 
         R1=0
         R2=1
@@ -73,7 +76,7 @@ case $CASE in
         ;;
     R4)
         BREAKRATE1=1.0
-        BREAKRATE2=$(echo "print($N0/$A0)" | python3)
+        BREAKRATE2=$(echo "print($M0/$M3)" | python3)
 
         R1=0
         R2=3
@@ -99,9 +102,9 @@ case $NGH in
         ;;
 esac
 
-echo $N0 > properties.txt
-echo $S0 >> properties.txt
-echo $A0 >> properties.txt
+echo $M0 > properties.txt
+echo $M2 >> properties.txt
+echo $M3 >> properties.txt
 echo $CASENUM >> properties.txt
 
 VARS="\
@@ -123,7 +126,7 @@ done
 
 runApplication blockMesh
 
-cp -r 0.orig 0
+cp -r 0.org 0
 
 rm 0/*.m4
 

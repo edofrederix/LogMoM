@@ -46,19 +46,23 @@ Foam::inletOutletLogNormalFvPatchScalarField::computeField() const
         q = pi/6.0;
     }
 
-    return
-        tmp<scalarField>
+    const scalarField& alpha =
+        patch().lookupPatchField<volScalarField,scalar>
         (
-            new scalarField
+            IOobject::groupName
             (
-                patch().size(),
-                q*6.0/pi
-              * pow(dsm_, gamma-3.0)
-              * exp
-                (
-                    (0.5*sqr(gamma)-2.5*gamma+3.0)*sqr(sigma_)
-                )
+                "alpha",
+                IOobject::group(this->internalField().name())
             )
+        );
+
+    return
+        alpha
+      * q*6.0/pi
+      * pow(dsm_, gamma-3.0)
+      * exp
+        (
+            (0.5*sqr(gamma)-2.5*gamma+3.0)*sqr(sigma_)
         );
 }
 
@@ -74,8 +78,7 @@ inletOutletLogNormalFvPatchScalarField
 :
     inletOutletFvPatchScalarField(p, iF),
     sigma_(0.0),
-    dsm_(0.0),
-    alphaName_("")
+    dsm_(0.0)
 {
     this->refValue() = Zero;
     this->refGrad() = Zero;
@@ -94,8 +97,7 @@ inletOutletLogNormalFvPatchScalarField
 :
     inletOutletFvPatchScalarField(ptf, p, iF, mapper),
     sigma_(ptf.sigma_),
-    dsm_(ptf.dsm_),
-    alphaName_(ptf.alphaName_)
+    dsm_(ptf.dsm_)
 {}
 
 
@@ -109,8 +111,7 @@ inletOutletLogNormalFvPatchScalarField
 :
     inletOutletFvPatchScalarField(p, iF),
     sigma_(readScalar(dict.lookup("sigma"))),
-    dsm_(readScalar(dict.lookup("dsm"))),
-    alphaName_(dict.lookup("alphaName"))
+    dsm_(readScalar(dict.lookup("dsm")))
 {
     this->phiName_ = dict.lookupOrDefault<word>("phi", "phi");
 
@@ -143,8 +144,7 @@ inletOutletLogNormalFvPatchScalarField
 :
     inletOutletFvPatchScalarField(tppsf, iF),
     sigma_(tppsf.sigma_),
-    dsm_(tppsf.dsm_),
-    alphaName_(tppsf.alphaName_)
+    dsm_(tppsf.dsm_)
 {}
 
 
@@ -195,8 +195,6 @@ const
 
     writeEntry(os, "sigma", sigma_);
     writeEntry(os, "dsm", dsm_);
-    writeEntry(os, "alphaName", alphaName_);
-
     writeEntry(os, "value", *this);
 }
 

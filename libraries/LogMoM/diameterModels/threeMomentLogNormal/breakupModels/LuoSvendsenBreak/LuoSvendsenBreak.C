@@ -30,16 +30,20 @@ Foam::breakupModels::LuoSvendsenBreak::LuoSvendsenBreak
     const dictionary& dict
 )
 :
-    breakupModel(pair, dict),
+    breakupModel
+    (
+        pair,
+        dict.subDict(this->type() + this->coeffsDictName_)
+    ),
     gammaUpperReg5by11_(),
-    C4_(dimensionedScalar::lookupOrDefault("C4", dict, dimless, 0.923)),
-    beta_(dimensionedScalar::lookupOrDefault("beta", dict, dimless, 2.05)),
+    C4_(dimensionedScalar::lookupOrDefault("C4", coeffs_, dimless, 0.923)),
+    beta_(dimensionedScalar::lookupOrDefault("beta", coeffs_, dimless, 2.05)),
     minEddyRatio_
     (
         dimensionedScalar::lookupOrDefault
         (
             "minEddyRatio",
-            dict,
+            coeffs_,
             dimless,
             11.4
         )
@@ -48,7 +52,7 @@ Foam::breakupModels::LuoSvendsenBreak::LuoSvendsenBreak
     (
         "sigma",
         dimMass/sqr(dimTime),
-        dict
+        coeffs_
     )
 {
     List<Tuple2<scalar, scalar>> gammaUpperReg5by11Table;

@@ -24,9 +24,6 @@ class inletOutletLogNormalFvPatchScalarField
         //- Value of desired Sauter mean diameter
         scalar dsm_;
 
-        //- Name of alpha field
-        word alphaName_;
-
 
 protected:
 
