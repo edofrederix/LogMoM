@@ -83,11 +83,11 @@ while upper < nTimes-startIndex-1:
 
     upper = upper + nInterval
 
-plt.plot(tMean, dragMean, color='w', lw=1.5)
-plt.plot(tMean, liftMean, color='w', lw=1.5)
+plt.plot(tMean, dragMean, color='w')
+plt.plot(tMean, liftMean, color='w')
 
-plt.plot(tMean, dragMean, '--', color='C0', lw=1)
-plt.plot(tMean, liftMean, '--', color='C1', lw=1)
+plt.plot(tMean, dragMean, '--', color='C0')
+plt.plot(tMean, liftMean, '--', color='C1')
 
 plt.plot([], [], '-k', label='Instantaneous')
 plt.plot([], [], '--k', label='Running average')
@@ -102,6 +102,6 @@ fig = plt.figure('forces')
 plt.xlabel(r'$t$ [s]')
 plt.ylabel(r'$F$ [N]')
 
-fs.post(fig, plt.legend())
+fs.post(fig, plt.legend(loc='best'))
 
 plt.savefig('forces.pdf')

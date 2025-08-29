@@ -9,6 +9,6 @@ FoamFile
 
 limitp
 {
-    type    limitPressure;
-    min     1e4;
+    type	limitPressure;
+    min		1e4;
 }

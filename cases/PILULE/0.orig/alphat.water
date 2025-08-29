@@ -30,4 +30,9 @@ boundaryField
         Prt             0.85;
         value           $internalField;
     }
+
+    symm
+    {
+        type            symmetry;
+    }
 }

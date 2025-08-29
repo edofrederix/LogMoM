@@ -14,7 +14,8 @@ rm -rf \
     constant/thermophysicalProperties.air[0-9] \
     constant/thermophysicalProperties.air[0-9][0-9] \
     system/functions \
-    system/sampleFields
+    system/sampleFields \
+    constant/momentumTransfer
 
 find $CASEPATH -name *.m4 | while read IN; do
 

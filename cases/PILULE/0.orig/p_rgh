@@ -14,19 +14,23 @@ boundaryField
 {
     inlet
     {
-        type               fixedFluxPressure;
-        value              $internalField;
+        type            fixedFluxPressure;
     }
 
     outlet
     {
-        type               prghPressure;
-        p                  $internalField;
-        value              $internalField;
+        type            prghPressure;
+        value           $internalField;
+        p               $internalField;
     }
 
     "wall.*"
     {
-        type               fixedFluxPressure;
+        type            fixedFluxPressure;
+    }
+
+    symm
+    {
+        type            symmetry;
     }
 }

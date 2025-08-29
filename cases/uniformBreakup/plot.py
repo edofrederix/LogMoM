@@ -153,8 +153,6 @@ fig = plt.figure('M0')
 plt.xlabel(r'$\tilde{t}$')
 plt.ylabel(r'$\tilde{M_0}$')
 
-plt.yscale('log')
-
 fs.post(fig, plt.legend())
 
 plt.savefig('M0.pdf')
@@ -163,8 +161,6 @@ fig = plt.figure('M2')
 
 plt.xlabel(r'$\tilde{t}$')
 plt.ylabel(r'$\tilde{M_2}$')
-
-plt.yscale('log')
 
 fs.post(fig, plt.legend())
 

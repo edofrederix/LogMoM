@@ -22,11 +22,8 @@ divSchemes
 {
     default                         none;
 
-    "div\(phi.*,alpha.*\)"          Gauss upwind;
-    "div\(alphaPhi.*,(f|kappa|lambda).*\)"
-                                    Gauss upwind;
-    "div\(alphaRhoPhi.*,(kappa|lambda).*\)"
-                                    Gauss upwind;
+    "div\(phi.*,alpha.*\)"          Gauss vanLeer;
+    "div\(alphaPhi.*,f.*\)"         Gauss vanLeer;
 
     "div\(phi.*,U.*\)"              Gauss linearUpwind limited;
     "div\(alphaRhoPhi.*,U.*\)"      Gauss linearUpwind limited;
@@ -34,8 +31,10 @@ divSchemes
                                     Gauss linearUpwind limited;
 
     "div\(alphaPhi.*,(h|e).*\)"     Gauss linearUpwind limited;
+    "div\(alphaRhoPhi.*,(h|e).*\)"  Gauss linearUpwind limited;
     "div\(alphaRhoPhi.*,K.*\)"      Gauss linearUpwind limited;
     "div\(alphaPhi.*,p\)"           Gauss linearUpwind limited;
+    div(alphaRhoPhi,(p|rho))        Gauss linearUpwind limited;
 
     "div\(alphaRhoPhi.*,(k|epsilon|omega).*\)"
                                     Gauss linearUpwind limited;

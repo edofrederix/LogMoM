@@ -29,4 +29,9 @@ boundaryField
         type            calculated;
         value           $internalField;
     }
+
+    symm
+    {
+        type            symmetry;
+    }
 }

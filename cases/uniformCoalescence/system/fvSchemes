@@ -21,14 +21,8 @@ divSchemes
 {
     default                         none;
 
-    "div\(phi,alpha.*\)"            Gauss vanLeer;
-    "div\(phir,alpha.*\)"           Gauss vanLeer;
-
-    "div\(alphaPhi.*,(kappa|lambda).*\)"
-                                    Gauss vanLeer;
-
-    "div\(F(0|2|6)Phi.*,(kappa|lambda).*\)"
-                                    Gauss vanLeer;
+    "div\(phi.*,alpha.*\)"          Gauss upwind;
+    "div\(alphaPhi.*,f.*\)"         Gauss upwind;
 
     "div\(alphaRhoPhi.*,U.*\)"      Gauss limitedLinearV 1;
     "div\(phi.*,U.*\)"              Gauss limitedLinearV 1;

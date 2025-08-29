@@ -72,3 +72,7 @@ processor[0-9][0-9][0-9][0-9][0-9]
 
 # OpenFOAM mesh
 polyMesh
+
+# Mesh files
+*.msh
+*.sim

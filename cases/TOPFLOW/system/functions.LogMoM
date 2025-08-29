@@ -3,11 +3,10 @@
 inletPhiN
 {
     type            surfaceFieldValue;
-    regionType      patch;
-    name            inlet;
+    patch           inlet;
     fields          (N.air);
     operation       sum;
-    weightField     phi0.air;
+    weightField     phi.air;
     writeControl    writeTime;
     writeFields     false;
 }
@@ -15,11 +14,10 @@ inletPhiN
 inletPhiA
 {
     type            surfaceFieldValue;
-    regionType      patch;
-    name            inlet;
+    patch           inlet;
     fields          (A.air);
     operation       sum;
-    weightField     phi2.air;
+    weightField     phi.air;
     writeControl    writeTime;
     writeFields     false;
 }
@@ -27,8 +25,7 @@ inletPhiA
 inletPhiAlpha
 {
     type            surfaceFieldValue;
-    regionType      patch;
-    name            inlet;
+    patch           inlet;
     fields          (alpha.air);
     operation       sum;
     weightField     phi.air;
@@ -41,11 +38,10 @@ inletPhiAlpha
 outletPhiN
 {
     type            surfaceFieldValue;
-    regionType      patch;
-    name            outlet;
+    patch           outlet;
     fields          (N.air);
     operation       sum;
-    weightField     phi0.air;
+    weightField     phi.air;
     writeControl    writeTime;
     writeFields     false;
 }
@@ -53,11 +49,10 @@ outletPhiN
 outletPhiA
 {
     type            surfaceFieldValue;
-    regionType      patch;
-    name            outlet;
+    patch           outlet;
     fields          (A.air);
     operation       sum;
-    weightField     phi2.air;
+    weightField     phi.air;
     writeControl    writeTime;
     writeFields     false;
 }
@@ -65,8 +60,7 @@ outletPhiA
 outletPhiAlpha
 {
     type            surfaceFieldValue;
-    regionType      patch;
-    name            outlet;
+    patch           outlet;
     fields          (alpha.air);
     operation       sum;
     weightField     phi.air;
@@ -79,9 +73,8 @@ outletPhiAlpha
 inletPhi
 {
     type            surfaceFieldValue;
-    regionType      patch;
-    name            inlet;
-    fields          (phi0.air phi2.air phi.air);
+    patch           inlet;
+    fields          (phi.air phi.air phi.air);
     operation       sum;
     writeControl    writeTime;
     writeFields     false;
@@ -92,19 +85,20 @@ inletPhi
 outletPhi
 {
     type            surfaceFieldValue;
-    regionType      patch;
-    name            outlet;
-    fields          (phi0.air phi2.air phi.air);
+    patch           outlet;
+    fields          (phi.air phi.air phi.air);
     operation       sum;
     writeControl    writeTime;
     writeFields     false;
 }
 
+/*
+
 // Forces
 
 forces0
 {
-    type            LogMoMPolyForces;
+    type            LogMoMForces;
     phase           air;
     gamma           0;
     executeControl  writeTime;
@@ -113,7 +107,7 @@ forces0
 
 forces2
 {
-    type            LogMoMPolyForces;
+    type            LogMoMForces;
     phase           air;
     gamma           2;
     executeControl  writeTime;
@@ -122,9 +116,16 @@ forces2
 
 forces3
 {
-    type            LogMoMPolyForces;
+    type            LogMoMForces;
     phase           air;
     gamma           3;
     executeControl  writeTime;
     writeControl    writeTime;
 }
+
+*/
+
+// Write fields
+
+#includeFunc    writeObjects(d.air)
+#includeFunc    writeObjects(sigma.air)

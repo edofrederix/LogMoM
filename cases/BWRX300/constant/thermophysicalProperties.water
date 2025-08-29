@@ -1,0 +1,43 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      thermophysicalProperties.water;
+}
+
+thermoType
+{
+    type            heRhoThermo;
+    mixture         pureMixture;
+    transport       const;
+    thermo          hConst;
+    equationOfState rhoConst;
+    specie          specie;
+    energy          sensibleEnthalpy;
+}
+
+mixture
+{
+    specie
+    {
+        molWeight   18.0153;
+    }
+    thermodynamics
+    {
+        Cp          4873.91;
+        Hf          0;
+        Tref        560.15;
+        Hsref       1087490.0;
+    }
+    equationOfState
+    {
+        rho         798.368;
+    }
+    transport
+    {
+        mu          105.951e-6;
+        Pr          0.831835;
+    }
+}

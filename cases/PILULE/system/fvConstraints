@@ -12,3 +12,19 @@ limitp
     type	limitPressure;
     min		1e4;
 }
+
+limitUWater
+{
+    type    limitMag;
+    max     4.0;
+    select  all;
+    field   U.water;
+}
+
+limitUAir
+{
+    type    limitMag;
+    max     4.0;
+    select  all;
+    field   U.air;
+}

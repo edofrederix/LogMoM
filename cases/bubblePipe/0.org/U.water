@@ -16,9 +16,7 @@ boundaryField
 
     inlet
     {
-        type            mapped;
-        field           U.water;
-        setAverage      yes;
+        type            mappedInternalValue;
         average         (0 0 1.6);
         interpolationScheme cell;
         value           $internalField;

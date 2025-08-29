@@ -142,17 +142,15 @@ plt.plot(t_tilde, M2_tilde, label='LogMoM')
 
 # Analytical solution
 
-if case < 5:
+(M0_tilde, M2_tilde, M6_tilde) = solution(t_tilde)
 
-    (M0_tilde, M2_tilde, M6_tilde) = solution(t_tilde)
+fig = plt.figure('M0')
 
-    fig = plt.figure('M0')
+plt.plot(t_tilde, M0_tilde, '--', label='analytical')
 
-    plt.plot(t_tilde, M0_tilde, '--', label='analytical')
+fig = plt.figure('M2')
 
-    fig = plt.figure('M2')
-
-    plt.plot(t_tilde, M2_tilde, '--', label='analytical')
+plt.plot(t_tilde, M2_tilde, '--', label='analytical')
 
 # Style/save
 

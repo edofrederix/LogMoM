@@ -1,0 +1,87 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+
+solvers
+{
+    "alpha.*"
+    {
+        nCorrectors     0;
+        nSubCycles      0;
+    }
+
+    bubbles
+    {
+        nCorrectors             1;
+        tolerance               1e-4;
+        scale                   true;
+        solveOnFinalIterOnly    true;
+        sourceUpdateInterval    1;
+    }
+
+    p_rgh
+    {
+        solver          GAMG;
+        smoother        DIC;
+        tolerance       1e-8;
+        relTol          0.01;
+        maxIter         0;
+    }
+
+    p_rghFinal
+    {
+        $p_rgh;
+        relTol          0;
+    }
+
+    "U.*"
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-6;
+        relTol          0;
+        maxIter         0;
+    }
+
+    "(lambda|kappa|f).*"
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-10;
+        relTol          0;
+        minIter         1;
+    }
+
+    "(e|k|epsilon).*"
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-6;
+        relTol          0;
+        maxIter         0;
+    }
+
+    yPsi
+    {
+        solver          PCG;
+        preconditioner  none;
+        tolerance       1e-10;
+        relTol          0;
+    }
+
+    yPsiFinal
+    {
+        $yPsi;
+    }
+}
+
+PIMPLE
+{
+    nOuterCorrectors    2;
+    nCorrectors         0;
+}

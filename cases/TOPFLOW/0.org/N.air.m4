@@ -15,7 +15,7 @@ boundaryField
     inlet
     {
         type            inletOutletLogNormal;
-        phi             VARPHINAME;
+        phi             phi.air;
         sigma           VARSIGMA;
         dsm             VARDSM;
         value           $internalField;
@@ -23,7 +23,7 @@ boundaryField
     outlet
     {
         type            inletOutletLogNormal;
-        phi             VARPHINAME;
+        phi             phi.air;
         sigma           VARSIGMA;
         dsm             VARDSM;
         value           $internalField;

@@ -19,10 +19,7 @@ boundaryField
     }
     outlet
     {
-        type            inletOutlet;
-        phi             phi.water;
-        inletValue      $internalField;
-        value           $internalField;
+        type            zeroGradient;
     }
     walls
     {

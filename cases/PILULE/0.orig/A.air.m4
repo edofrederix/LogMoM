@@ -15,7 +15,7 @@ boundaryField
     inlet
     {
         type            inletOutletLogNormal;
-        phi             VARFLUX2.air;
+        phi             phi.air;
         sigma           VARSIGMA;
         dsm             VARDSM;
         value           $internalField;
@@ -23,14 +23,16 @@ boundaryField
 
     outlet
     {
-        type            inletOutlet;
-        phi             VARFLUX2.air;
-        inletValue      $internalField;
-        value           $internalField;
+        type            zeroGradient;
     }
 
     "wall.*"
     {
         type            zeroGradient;
+    }
+
+    symm
+    {
+        type            symmetry;
     }
 }

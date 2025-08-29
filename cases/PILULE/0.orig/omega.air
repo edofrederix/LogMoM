@@ -20,15 +20,17 @@ boundaryField
 
     outlet
     {
-        type            inletOutlet;
-        phi             phi.air;
-        inletValue      $internalField;
-        value           $internalField;
+        type            zeroGradient;
     }
 
     "wall.*"
     {
         type            omegaWallFunction;
         value           $internalField;
+    }
+
+    symm
+    {
+        type            symmetry;
     }
 }

@@ -1,0 +1,24 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      fvModels;
+}
+
+phaseChange
+{
+    type            heatTransferLimitedPhaseChange;
+    libs            ("libmultiphaseEulerFvModels.so");
+
+    phases          (steam water);
+
+    energySemiImplicit yes;
+    pressureImplicit no;
+
+    saturationTemperature
+    {
+        type            constant;
+        value           VARTR;
+    }
+}

@@ -1,0 +1,33 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      createPatchDict;
+}
+
+patches
+(
+    {
+        name    symm_x0;
+
+        patchInfo
+        {
+            type    symmetry;
+        }
+
+        constructFrom   set;
+        set             x0;
+    }
+
+    {
+        name    symm_y0;
+
+        patchInfo
+        {
+            type    symmetry;
+        }
+
+        constructFrom   set;
+        set             y0;
+    }
+);

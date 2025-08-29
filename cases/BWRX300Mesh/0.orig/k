@@ -1,0 +1,36 @@
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      k;
+}
+
+dimensions      [0 2 -2 0 0 0 0];
+
+internalField   uniform 0.00375;
+
+boundaryField
+{
+    "inlet.*"
+    {
+        type            fixedValue;
+        value           $internalField;
+    }
+
+    outlet
+    {
+        type            zeroGradient;
+    }
+
+    "wall.*"
+    {
+        type            kqRWallFunction;
+        value           uniform 0.00375;
+    }
+
+    "symm.*"
+    {
+        type            symmetry;
+    }
+}

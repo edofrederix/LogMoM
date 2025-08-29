@@ -1,0 +1,101 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      phaseProperties;
+}
+
+phases (air water);
+
+air
+{
+    type            pureIsothermalPhaseModel;
+
+    diameterModel   LogMoM;
+
+    LogMoMCoeffs
+    {
+        dMax            1e-1;
+        dMin            1e-4;
+
+        continuousPhase water;
+
+        phaseChange     false;
+
+        sources
+        (
+            coalescence
+            {
+                type            LehrMilliesMewes;
+                GaussHermite    3;
+                uCrit           0.01;
+            }
+
+            breakup
+            {
+                type            LehrMilliesMewes;
+                GaussHermite    3;
+                GaussLegendre   5;
+            }
+        );
+    }
+
+    residualAlpha   1e-6;
+}
+
+water
+{
+    type            pureIsothermalPhaseModel;
+
+    diameterModel   constant;
+
+    constantCoeffs
+    {
+        d           1e-4;
+    }
+
+    residualAlpha   1e-6;
+}
+
+blending
+{
+    default
+    {
+        type            linear;
+        minFullyContinuousAlpha.air 0.7;
+        minPartlyContinuousAlpha.air 0.3;
+        minFullyContinuousAlpha.water 0.7;
+        minPartlyContinuousAlpha.water 0.3;
+    }
+
+    drag
+    {
+        type            linear;
+        minFullyContinuousAlpha.air 0.7;
+        minPartlyContinuousAlpha.air 0.5;
+        minFullyContinuousAlpha.water 0.7;
+        minPartlyContinuousAlpha.water 0.5;
+    }
+}
+
+surfaceTension
+{
+    air_water
+    {
+        type    constant;
+        sigma   0.06;
+    }
+}
+
+interfaceCompression
+{
+    air_water   1;
+}
+
+aspectRatio
+{
+    air_dispersedIn_water
+    {
+        type Wellek;
+    }
+}

@@ -23,7 +23,7 @@ boundaryField
     outlet
     {
         type            inletOutlet;
-        phi             phi0.air;
+        phi             phi.air;
         inletValue      $internalField;
         value           $internalField;
     }
@@ -31,5 +31,15 @@ boundaryField
     walls
     {
         type            zeroGradient;
+    }
+}
+
+sources
+{
+    massSource
+    {
+        type            inletOutletLogNormal;
+        sigma           0.5;
+        dsm             1e-3;
     }
 }

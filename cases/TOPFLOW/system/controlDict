@@ -7,7 +7,9 @@ FoamFile
     object      controlDict;
 }
 
-application     multiphaseEulerFoam;
+application     foamRun;
+
+solver          multiphaseEuler;
 
 startFrom       latestTime;
 
@@ -47,6 +49,7 @@ libs
 (
     "libLogMoM.so"
     "libTOPFLOWAlphaInlet.so"
+    "libfieldFunctionObjects.so"
 );
 
 functions

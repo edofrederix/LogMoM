@@ -1,12 +1,30 @@
 FoamFile
 {
+    version     2.0;
     format      ascii;
     class       dictionary;
     location    "constant";
     object      fvModels;
 }
 
-maxDeltaT
+phaseTurbulenceStabilisationAir
 {
-    type    polyMaxDeltaT;
+    type    phaseTurbulenceStabilisation;
+
+    libs    ("libmultiphaseEulerFvModels.so");
+
+    phase   air;
+
+    alphaInversion  0.1;
+}
+
+phaseTurbulenceStabilisationWater
+{
+    type    phaseTurbulenceStabilisation;
+
+    libs    ("libmultiphaseEulerFvModels.so");
+
+    phase   water;
+
+    alphaInversion  0.1;
 }

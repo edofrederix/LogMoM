@@ -3,7 +3,7 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      ai.air;
+    object      A.air;
 }
 
 dimensions      [0 -1 0 0 0 0 0];
@@ -15,7 +15,7 @@ boundaryField
     inlet
     {
         type            inletOutletLogNormal;
-        phi             VARPHINAME;
+        phi             phi.air;
         sigma           VARSIGMA;
         dsm             VARDSM;
         value           $internalField;
@@ -23,7 +23,7 @@ boundaryField
     outlet
     {
         type            inletOutletLogNormal;
-        phi             VARPHINAME;
+        phi             phi.air;
         sigma           VARSIGMA;
         dsm             VARDSM;
         value           $internalField;

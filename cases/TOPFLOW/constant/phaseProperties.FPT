@@ -5,8 +5,6 @@ FoamFile
     object      phaseProperties;
 }
 
-type    populationBalanceMultiphaseSystem;
-
 phases
 (
     #include "FPT/phaseNames"
@@ -66,34 +64,3 @@ surfaceTension
 
 interfaceCompression
 {}
-
-drag
-{
-    #include "FPT/drags"
-}
-
-virtualMass
-{
-    #include "FPT/virtualMasses"
-}
-
-heatTransfer
-{}
-
-phaseTransfer
-{}
-
-lift
-{
-    #include "FPT/lifts"
-}
-
-wallLubrication
-{
-    #include "FPT/wallLubrications"
-}
-
-turbulentDispersion
-{
-    #include "FPT/turbulentDispersions"
-}

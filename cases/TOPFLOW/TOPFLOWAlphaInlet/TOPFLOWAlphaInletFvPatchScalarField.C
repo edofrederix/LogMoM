@@ -89,34 +89,6 @@ TOPFLOWAlphaInletFvPatchScalarField
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::TOPFLOWAlphaInletFvPatchScalarField::autoMap
-(
-    const fvPatchFieldMapper& m
-)
-{
-    fixedValueFvPatchScalarField::autoMap(m);
-}
-
-
-void Foam::TOPFLOWAlphaInletFvPatchScalarField::rmap
-(
-    const fvPatchScalarField& ptf,
-    const labelList& addr
-)
-{
-    fixedValueFvPatchScalarField::rmap(ptf, addr);
-}
-
-
-void Foam::TOPFLOWAlphaInletFvPatchScalarField::reset
-(
-    const fvPatchScalarField& ptf
-)
-{
-    fixedValueFvPatchScalarField::reset(ptf);
-}
-
-
 void Foam::TOPFLOWAlphaInletFvPatchScalarField::updateCoeffs()
 {
     if (this->updated())

@@ -1,0 +1,82 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      momentumTransfer;
+}
+
+drag
+{
+    steam_dispersedIn_water
+    {
+        type        SchillerNaumann;
+        residualRe  1e-3;
+    }
+
+    water_dispersedIn_steam
+    {
+        type        SchillerNaumann;
+        residualRe  1e-3;
+    }
+
+    steam_segregatedWith_water
+    {
+        type    segregated;
+        m       0.5;
+        n       8;
+    }
+}
+
+virtualMass
+{
+    steam_dispersedIn_water
+    {
+        type    constantCoefficient;
+        Cvm     0.5;
+    }
+
+    water_dispersedIn_steam
+    {
+        type    constantCoefficient;
+        Cvm     0.5;
+    }
+}
+
+lift
+{
+    steam_dispersedIn_water
+    {
+        type    none;
+    }
+
+    water_dispersedIn_steam
+    {
+        type    none;
+    }
+}
+
+wallLubrication
+{
+    steam_dispersedIn_water
+    {
+        type    none;
+    }
+
+    water_dispersedIn_steam
+    {
+        type    none;
+    }
+}
+
+turbulentDispersion
+{
+    steam_dispersedIn_water
+    {
+        type    none;
+    }
+
+    water_dispersedIn_steam
+    {
+        type    none;
+    }
+}

@@ -1,0 +1,13 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      createZonesDict;
+}
+
+injection
+{
+    type        box;
+    zoneType    cell;
+    box         (0 -1 0.0) (0.005 1 0.01);
+}

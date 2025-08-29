@@ -5,7 +5,9 @@ FoamFile
     object      controlDict;
 }
 
-application         multiphaseEulerFoam;
+application         foamRun;
+
+solver              multiphaseEuler;
 
 startFrom           latestTime;
 
@@ -19,7 +21,7 @@ deltaT              1e-4;
 
 writeControl        adjustableRunTime;
 
-writeInterval       0.5;
+writeInterval       0.1;
 
 purgeWrite          0;
 
@@ -50,36 +52,6 @@ functions
 {
     #includeFunc    residuals(p_rgh, k.water, omega.water)
 
-    diameter02
-    {
-        type    threeMomentLogNormalDiameter;
-        p       0;
-        q       2;
-        phase   air;
-    }
-
-    diameter22
-    {
-        type    threeMomentLogNormalDiameter;
-        p       2;
-        q       2;
-        phase   air;
-    }
-
-    diameter32
-    {
-        type    threeMomentLogNormalDiameter;
-        p       3;
-        q       2;
-        phase   air;
-    }
-
-    sigma
-    {
-        type    threeMomentLogNormalSigma;
-        phase   air;
-    }
-
     #includeFunc    graphUniform
     (
         funcName=graph,
@@ -88,15 +60,14 @@ functions
         nPoints=100,
         fields=
         (
-            d(0,2).air
-            d(2,2).air
-            d(3,2).air
+            d.air
+            dcm.air
             sigma.air
             alpha.air
             U.air
-            U0.air
-            U2.air
         )
     )
 
+    #includeFunc    writeObjects(d.air)
+    #includeFunc    writeObjects(sigma.air)
 }

@@ -9,5 +9,6 @@ cd "${0%/*}" || exit 1
 # Prepare case
 cp -r 0.org 0
 runApplication blockMesh
-runApplication topoSet
+runApplication createZones
+runApplication setLogNormal air 0.5 1e-3
 runApplication decomposePar

@@ -14,20 +14,25 @@ boundaryField
 {
     outlet
     {
-        type               inletOutlet;
-        phi                phi.water;
-        inletValue         $internalField;
-        value              $internalField;
+        type            inletOutlet;
+        phi             phi.water;
+        inletValue      $internalField;
+        value           $internalField;
     }
 
     inlet
     {
-        type               fixedValue;
-        value              $internalField;
+        type            fixedValue;
+        value           $internalField;
     }
 
     "wall.*"
     {
-        type               zeroGradient;
+        type            zeroGradient;
+    }
+
+    symm
+    {
+        type            symmetry;
     }
 }

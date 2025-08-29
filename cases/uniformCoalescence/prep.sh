@@ -5,7 +5,7 @@ source $FOAM_SRC/../bin/tools/CleanFunctions
 
 # Parameters -------------------------------------------------------------------
 
-CASE=$1
+CASE=${1:-S1}
 
 if [[ ! "$CASE" =~ ^(S1|S2|S4|CR|GSR|FMR)?$ ]]; then
 
@@ -14,10 +14,11 @@ if [[ ! "$CASE" =~ ^(S1|S2|S4|CR|GSR|FMR)?$ ]]; then
 
 fi
 
-NGH=5
+# Some kernels require 10 integration points
+NGH=10
 
 ALPHA=0.1
-SIGMA=1.0
+SIGMA=0.25
 DSM=1e-3
 
 # ------------------------------------------------------------------------------
@@ -155,7 +156,7 @@ esac
 
 case $NGH in
 
-    5|10|20)
+    3|5|10|20)
         ;;
     *)
         echo "Invalid number of Gauss-Hermite quadrature nodes (should be 5, 10 or 20)"

@@ -6,13 +6,13 @@ source $FOAM_SRC/../bin/tools/CleanFunctions
 
 # Parameters -------------------------------------------------------------------
 
-D=0.195         # Diameter of the pipe [m]
+DP=0.195        # Diameter of the pipe [m]
 L=7.5855        # Length of the pipe = D*(40-1.1) in [m]
 POUT=120000     # Outlet pressure [Pa]
 
-CASE=$1
-MESH=$2
-MODE=$3
+MODE=${1:-logmom}
+CASE=${2:-A}
+MESH=${3:-16}
 
 case $CASE in
 
@@ -87,52 +87,14 @@ cp -r 0.org 0
 
 if [ "$MODE" == "logmom" ]; then
 
-    POLY=$4
-
     cp system/sampleFields.LogMoM system/sampleFields
     cp system/functions.LogMoM system/functions
 
-    case $POLY in
+    m4 -DVARSIGMA=$SIGMA -DVARDSM=$DSM 0/A.air.m4 > 0/A.air
+    m4 -DVARSIGMA=$SIGMA -DVARDSM=$DSM 0/N.air.m4 > 0/N.air
 
-        true)
-
-            m4 -DVARPHINAME="phi2.air" -DVARSIGMA=$SIGMA -DVARDSM=$DSM \
-                0/A.air.m4 > 0/A.air
-            m4 -DVARPHINAME="phi0.air" -DVARSIGMA=$SIGMA -DVARDSM=$DSM \
-                0/N.air.m4 > 0/N.air
-
-            m4 -DVARPHASESYSTEM=basicPolyPhaseSystem \
-                -DVARPHASEMODEL=pureIsothermalPolyPhaseModel \
-                constant/phaseProperties.LogMoM.m4 > constant/phaseProperties
-
-        ;;
-
-        false)
-
-            m4 -DVARPHINAME="phi.air" -DVARSIGMA=$SIGMA -DVARDSM=$DSM \
-                0/A.air.m4 > 0/A.air
-            m4 -DVARPHINAME="phi.air" -DVARSIGMA=$SIGMA -DVARDSM=$DSM \
-                0/N.air.m4 > 0/N.air
-
-            m4  -DVARPHASESYSTEM=basicMultiphaseSystem \
-                -DVARPHASEMODEL=pureIsothermalPhaseModel \
-                constant/phaseProperties.LogMoM.m4 > constant/phaseProperties
-
-            sed -i 's/U0\.air//g' system/sampleFields
-            sed -i 's/U2\.air//g' system/sampleFields
-
-            sed -i 's/phi2/phi/g' system/functions
-            sed -i 's/phi0/phi/g' system/functions
-
-        ;;
-
-        *)
-
-            echo "Specify if simulation is poly-celeric (true or false)"
-            exit
-        ;;
-
-    esac
+    cp constant/phaseProperties.LogMoM constant/phaseProperties
+    cp constant/momentumTransfer.LogMoM constant/momentumTransfer
 
     m4 -DVARPHASENAME=air -DVARALPHAIN=$ALPHAIN -DVARCASE=$CASE \
         0/alpha.air.m4 > 0/alpha.air
@@ -150,11 +112,12 @@ if [ "$MODE" == "logmom" ]; then
 else
 
     cp constant/phaseProperties.FPT constant/phaseProperties
+    cp constant/momentumTransfer.FPT constant/momentumTransfer
     cp system/sampleFields.FPT system/sampleFields
     cp system/functions.FPT system/functions
 
-    NGROUPS=$4
-    NSECTIONSPERGROUP=$5
+    NGROUPS=${4:-16}
+    NSECTIONSPERGROUP=${5:-1}
 
     if [[ ! "$NGROUPS" =~ ^[0-9]+$ ]]; then
 
@@ -189,20 +152,25 @@ else
         D=($(cat d.txt | head -n $N | tail -n $NSECTIONSPERGROUP))
         F=($(cat f.txt | head -n $N | tail -n $NSECTIONSPERGROUP))
 
-        PHASENAME="air$I"
+        if [[ "$NGROUPS" == "1" ]]; then
+            PHASENAME="air"
+        else
+            PHASENAME="air$I"
+        fi
+
         PHASEPAIR="${PHASENAME}_dispersedIn_water"
+        PHASEPAIR2="${PHASENAME}_water"
 
         for ((J=0; J<$NSECTIONSPERGROUP; J++)); do
 
             DJ=${D[$J]}
             FJ=${F[$J]}
 
-            K=$((K+1))
-
-            echo "f$K {dSph $DJ; value $FJ;}" \
+            echo "{dSph $DJ;}" \
                 >> constant/FPT/sizeGroups.$PHASENAME
-            m4 -DVARPHASENAME=$PHASENAME -DVARFIELD=1.0 \
-                -DVARINLET=$FJ -DVARFNAME=f$K 0/f.air.m4 > 0/f$K.$PHASENAME
+
+            m4  -DVARPHASENAME=$PHASENAME -DVARFIELD=$FJ \
+                -DVARFNAME=f$K 0/f.m4 > 0/f$K.$PHASENAME
 
             m4  -DVARFFIELD=f$K.$PHASENAME \
                 -DVARALPHAFLUX=alphaPhi.$PHASENAME \
@@ -218,9 +186,11 @@ else
 
             echo f$K.$PHASENAME >> system/sampleFields
 
+            K=$((K+1))
+
         done
 
-        VARS="-DVARPHASENAME=$PHASENAME -DVARPHASEPAIR=$PHASEPAIR"
+        VARS="-DVARPHASENAME=$PHASENAME -DVARPHASEPAIR=$PHASEPAIR -DVARPHASEPAIR2=$PHASEPAIR2"
 
         echo $PHASENAME >> constant/FPT/phaseNames
         m4 $VARS constant/templates/phase.m4 >> constant/FPT/phases
@@ -242,12 +212,14 @@ else
             > 0/U.$PHASENAME
         m4 -DVARPHASENAME=$PHASENAME  0/T.air.m4 > 0/T.$PHASENAME
 
-        m4 -DVARPHASENAME=$PHASENAME -DVARFIELD=1.0 -DVARINLET=1.0 \
-            -DVARFNAME=f 0/f.air.m4 > 0/f.$PHASENAME
+        if [[ "$PHASENAME" != "air" ]]; then
 
-        cp constant/momentumTransport.air constant/momentumTransport.$PHASENAME
-        cp constant/thermophysicalProperties.air \
-            constant/thermophysicalProperties.$PHASENAME
+            cp constant/momentumTransport.air \
+                constant/momentumTransport.$PHASENAME
+            cp constant/thermophysicalProperties.air \
+                constant/thermophysicalProperties.$PHASENAME
+
+        fi
 
         m4  -DVARFLUX=phi.$PHASENAME \
             -DVARFUNCTIONNAME=outletPhi${I} \
@@ -259,6 +231,11 @@ else
             -DVARPATCHNAME=inlet \
             system/templates/functionPhi.m4 >> system/functions
 
+        echo "#includeFunc    writeObjects(d.${PHASENAME})" \
+            >> system/functions
+
+        echo d.$PHASENAME >> system/sampleFields
+        echo alpha.$PHASENAME >> system/sampleFields
         echo U.$PHASENAME >> system/sampleFields
 
     done
@@ -276,7 +253,7 @@ rm -f 0/*.m4
 wmake -s TOPFLOWAlphaInlet
 
 NR=$MESH
-NZ=$(echo "print(int(round(2.0*$L/$D*$MESH/6.0)))" | python)
+NZ=$(echo "print(int(round(2.0*$L/$DP*$MESH/6.0)))" | python)
 
 m4 -DVARNR=$NR -DVARNZ=$NZ system/blockMeshDict.m4 > system/blockMeshDict
 

@@ -1,0 +1,62 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      alpha.water;
+}
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0.99999;
+
+boundaryField
+{
+    inlet_low
+    {
+        type            fixedValue;
+        value           $internalField;
+    }
+
+    inlet_medium
+    {
+        type            uniformFixedValue;
+        value           $internalField;
+        uniformValue    table
+        (
+            (0.0 0.99999)
+            (0.5 0.375)
+        );
+    }
+
+    inlet_high
+    {
+        type            uniformFixedValue;
+        value           $internalField;
+        uniformValue    table
+        (
+            (0.0 0.99999)
+            (0.5 0.249)
+        );
+    }
+
+    inlet_bypasses
+    {
+        $inlet_low
+    }
+
+    outlet
+    {
+        type            zeroGradient;
+    }
+
+    "wall.*"
+    {
+        type            zeroGradient;
+    }
+
+    "symm.*"
+    {
+        type            symmetry;
+    }
+}

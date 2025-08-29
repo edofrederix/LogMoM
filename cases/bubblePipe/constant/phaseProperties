@@ -5,61 +5,38 @@ FoamFile
     object      phaseProperties;
 }
 
-type    basicPolyPhaseSystem;
-
 phases (air water);
 
 air
 {
-    type            pureIsothermalPolyPhaseModel;
+    type            pureIsothermalPhaseModel;
 
-    diameterModel   threeMomentLogNormal;
+    diameterModel   LogMoM;
 
-    threeMomentLogNormalCoeffs
+    LogMoMCoeffs
     {
         dMax            1e-1;
         dMin            1e-4;
 
-        p               3;
-        q               2;
-
         continuousPhase water;
 
-        coalescence
-        {
-            active                  true;
+        phaseChange     false;
 
-            efficiencyType          constant;
-            frequencyType           LehrMilliesMewes;
-
-            constantCoaEffCoeffs
+        sources
+        (
+            coalescence
             {
-                K                       1;
+                type            LehrMilliesMewes;
+                GaussHermite    3;
             }
 
-            LehrMilliesMewesCoaFreqCoeffs
+            breakup
             {
-                turbulentCoalescence    true;
-                buoyantCoalescence      true;
-                laminarCoalescence      false;
+                type            LehrMilliesMewes;
+                GaussHermite    3;
+                GaussLegendre   3;
             }
-
-            GaussHermite            5;
-        }
-
-        breakup
-        {
-            active          true;
-            type            LehrMilliesMewes;
-
-            LehrMilliesMewesBreakCoeffs
-            {
-                sigma           0.07197;
-            }
-
-            GaussHermite    5;
-            GaussLegendre   5;
-        }
+        );
     }
 
     residualAlpha   1e-6;
@@ -94,14 +71,9 @@ blending
     {
         type            linear;
         minFullyContinuousAlpha.air 0.7;
-        minPartlyContinuousAlpha.air 0.5;
+        minPartlyContinuousAlpha.air 0.3;
         minFullyContinuousAlpha.water 0.7;
         minPartlyContinuousAlpha.water 0.5;
-    }
-
-    polyDrag
-    {
-        $drag;
     }
 }
 
@@ -116,110 +88,3 @@ surfaceTension
 
 interfaceCompression
 {}
-
-drag
-{
-    air_dispersedIn_water
-    {
-        type            LogMoM;
-        mode            quadrature;
-        GaussHermite    5;
-
-        drag
-        {
-            type            IshiiZuber;
-            residualRe      1e-3;
-        }
-    }
-
-    water_dispersedIn_air
-    {
-        type            SchillerNaumann;
-        residualRe      1e-3;
-    }
-
-    air_segregatedWith_water
-    {
-        type    segregated;
-        m       0.5;
-        n       8;
-    }
-}
-
-virtualMass
-{
-    air_dispersedIn_water
-    {
-        type            constantCoefficient;
-        Cvm             0.5;
-    }
-
-    water_dispersedIn_air
-    {
-        type            constantCoefficient;
-        Cvm             0.5;
-    }
-}
-
-heatTransfer
-{}
-
-phaseTransfer
-{}
-
-lift
-{
-    air_dispersedIn_water
-    {
-        type    LogMoM;
-        mode    diameter;
-        p       (2 0.33333);
-        q       (2 0);
-
-        lift
-        {
-            type    Tomiyama;
-
-            aspectRatio
-            {
-                type    Wellek;
-            }
-        }
-
-        wallDamping
-        {
-            type                 cosine;
-            Cd                   1;
-            zeroInNearWallCells  true;
-        }
-    }
-
-    water_dispersedIn_air
-    {
-        type    none;
-    }
-}
-
-wallLubrication
-{}
-
-turbulentDispersion
-{
-    air_dispersedIn_water
-    {
-        type            LogMoM;
-        mode            quadrature;
-        GaussHermite    5;
-
-        turbulentDispersion
-        {
-            type    Burns;
-            sigma   1;
-        }
-    }
-
-    water_dispersedIn_air
-    {
-        type    none;
-    }
-}

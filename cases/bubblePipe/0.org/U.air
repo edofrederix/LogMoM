@@ -16,10 +16,7 @@ boundaryField
 
     inlet
     {
-        type            mapped;
-        field           U.air;
-        setAverage      no;
-        average         (0 0 0);
+        type            mappedInternalValue;
         interpolationScheme cell;
         value           $internalField;
     }
@@ -34,5 +31,14 @@ boundaryField
     walls
     {
         type            slip;
+    }
+}
+
+sources
+{
+    massSource
+    {
+        type                uniformInletOutlet;
+        uniformInletValue   (0 0 0);
     }
 }

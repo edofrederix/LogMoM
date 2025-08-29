@@ -6,40 +6,13 @@ FoamFile
     object      fvModels;
 }
 
-maxDeltaT
-{
-    type    polyMaxDeltaT;
-}
-
 massSource
 {
     type            massSource;
 
-    selectionMode   cellZone;
+    phase           air;
+
     cellZone        injection;
 
     massFlowRate    6e-7;
-
-    phase           air;
-    rho             thermo:rho.air;
-
-    // To calculate moments:
-    //
-    // lambda = 6.0/pi/d^3 * exp(3*sigma^2) / 1e6 = 70.76
-    // kappa = 6.0/d = 2000.0,
-    //
-    // with d = 3e-3, sigma = 0.01. The provided values are multiplied by the
-    // mass flow rate, however, the N and A equations are written in the form
-    // ddt(N) and ddt(A) and not in the phase-specific one. So, we need to
-    // divide by alpha*rho, which leaves roughly the lambda and kappa values at
-    // rho = 1.
-
-    fieldValues
-    {
-        N.air       70.76;
-        A.air       2000.0;
-        U0.air      (0 0 0);
-        U2.air      (0 0 0);
-        U.air       (0 0 0);
-    }
 }

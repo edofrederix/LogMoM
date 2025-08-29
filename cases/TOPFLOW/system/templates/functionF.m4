@@ -1,8 +1,7 @@
 VARFUNCTIONNAME
 {
     type            surfaceFieldValue;
-    regionType      patch;
-    name            VARPATCHNAME;
+    patch           VARPATCHNAME;
     fields          (VARFFIELD);
     operation       sum;
     weightField     VARALPHAFLUX;

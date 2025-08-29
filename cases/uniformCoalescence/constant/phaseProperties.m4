@@ -7,8 +7,6 @@ FoamFile
     object      phaseProperties;
 }
 
-type basicMultiphaseSystem;
-
 phases (water bubbles);
 
 water
@@ -29,44 +27,26 @@ bubbles
 {
     type            pureIsothermalPhaseModel;
 
-    diameterModel   threeMomentLogNormal;
+    diameterModel   LogMoM;
 
-    threeMomentLogNormalCoeffs
+    LogMoMCoeffs
     {
         dMax            100.0;
         dMin            1e-16;
 
         continuousPhase water;
 
-        p               3;
-        q               2;
-
-        coalescence
-        {
-            active          true;
-
-            efficiencyType  polynomial;
-            frequencyType   constant;
-
-            polynomialCoaEffCoeffs
+        sources
+        (
+            coalescence
             {
-                K   (VARCOARATE1 VARCOARATE2 VARCOARATE3 VARCOARATE4);
-                p   (VARP1 VARP2 VARP3 VARP4);
-                q   (VARQ1 VARQ2 VARQ3 VARQ4);
+                type            polynomial;
+                K               (VARCOARATE1 VARCOARATE2 VARCOARATE3 VARCOARATE4);
+                p               (VARP1 VARP2 VARP3 VARP4);
+                q               (VARQ1 VARQ2 VARQ3 VARQ4);
+                GaussHermite    VARNGH;
             }
-
-            constantCoaFreqCoeffs
-            {
-                K   1.0;
-            }
-
-            GaussHermite    VARNGH;
-        }
-
-        breakup
-        {
-            active  false;
-        }
+        );
     }
 
     residualAlpha   1e-6;
@@ -83,37 +63,10 @@ blending
 }
 
 surfaceTension
-();
+{}
 
 interfaceCompression
-();
+{}
 
 aspectRatio
-();
-
-drag
-(
-    (bubbles in water)
-    {
-        type            SchillerNaumann;
-        residualRe      1e-3;
-    }
-);
-
-virtualMass
-();
-
-heatTransfer
-();
-
-phaseTransfer
-();
-
-lift
-();
-
-wallLubrication
-();
-
-turbulentDispersion
-();
+{}

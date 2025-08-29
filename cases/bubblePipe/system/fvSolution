@@ -15,6 +15,15 @@ solvers
         nAlphaSubCycles 2;
     }
 
+    air
+    {
+        nCorr                1;
+        tolerance            1e-4;
+        scale                true;
+        solveOnFinalIterOnly false;
+        sourceUpdateInterval 1;
+    }
+
     p_rgh
     {
         solver          GAMG;
@@ -55,12 +64,25 @@ solvers
         minIter         1;
     }
 
+    "f.*"
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-6;
+        relTol          0;
+    }
+
     yPsi
     {
         solver          PCG;
         preconditioner  none;
         tolerance       1e-10;
         relTol          0;
+    }
+
+    yPsiFinal
+    {
+        $yPsi;
     }
 }
 

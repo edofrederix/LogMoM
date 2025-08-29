@@ -1,0 +1,30 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      heatTransfer;
+}
+
+steam_dispersedIn_water_inThe_water
+{
+    type    constantNu;
+    Nu      500;
+}
+
+steam_dispersedIn_water_inThe_steam
+{
+    type    constantNu;
+    Nu      500;
+}
+
+water_dispersedIn_steam_inThe_water
+{
+    type            spherical;
+    residualAlpha   1e-6;
+}
+
+water_dispersedIn_steam_inThe_steam
+{
+    type            spherical;
+    residualAlpha   1e-6;
+}

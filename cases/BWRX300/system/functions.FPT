@@ -1,0 +1,4 @@
+// Write fields
+
+#includeFunc    writeObjects(d.steam)
+#includeFunc    writeObjects(rho.steam)

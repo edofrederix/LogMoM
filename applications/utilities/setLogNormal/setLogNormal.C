@@ -1,17 +1,20 @@
 #include "argList.H"
-#include "fvCFD.H"
+#include "fvMesh.H"
+#include "volFields.H"
+
+using namespace Foam;
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
 {
-    argList::validArgs.append("alpha name");
+    argList::validArgs.append("phase name");
     argList::validArgs.append("sigma");
     argList::validArgs.append("dsm");
 
     #include "setRootCase.H"
 
-    const word alphaName(args.argRead<word>(1));
+    const word phaseName(args.argRead<word>(1));
 
     const dimensionedScalar sigma
     (
@@ -36,8 +39,8 @@ int main(int argc, char *argv[])
     (
         IOobject
         (
-            IOobject::groupName("alpha", alphaName),
-            runTime.timeName(),
+            IOobject::groupName("alpha", phaseName),
+            runTime.name(),
             mesh,
             IOobject::MUST_READ,
             IOobject::AUTO_WRITE
@@ -49,8 +52,8 @@ int main(int argc, char *argv[])
     (
         IOobject
         (
-            IOobject::groupName("N", alphaName),
-            runTime.timeName(),
+            IOobject::groupName("N", phaseName),
+            runTime.name(),
             mesh,
             IOobject::MUST_READ,
             IOobject::AUTO_WRITE
@@ -62,8 +65,8 @@ int main(int argc, char *argv[])
     (
         IOobject
         (
-            IOobject::groupName("A", alphaName),
-            runTime.timeName(),
+            IOobject::groupName("A", phaseName),
+            runTime.name(),
             mesh,
             IOobject::MUST_READ,
             IOobject::AUTO_WRITE
