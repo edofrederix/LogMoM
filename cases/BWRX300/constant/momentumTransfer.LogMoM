@@ -1,0 +1,103 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      momentumTransfer;
+}
+
+drag
+{
+    steam_dispersedIn_water
+    {
+        type            LogMoM;
+        mode            quadrature;
+        GaussHermite    3;
+
+        drag
+        {
+            type        IshiiZuber;
+        }
+    }
+
+    water_dispersedIn_steam
+    {
+        type        SchillerNaumann;
+        residualRe  1e-3;
+    }
+
+    steam_segregatedWith_water
+    {
+        type    segregated;
+        m       0.5;
+        n       8;
+    }
+}
+
+virtualMass
+{
+    steam_dispersedIn_water
+    {
+        type    constantCoefficient;
+        Cvm     0.5;
+    }
+
+    water_dispersedIn_steam
+    {
+        type    constantCoefficient;
+        Cvm     0.5;
+    }
+}
+
+lift
+{
+    steam_dispersedIn_water
+    {
+        type            LogMoM;
+        mode            quadrature;
+        GaussHermite    3;
+
+        // For better agreement with FPT, this should be set to false. However,
+        // proper integration of the lift force over the size distribution
+        // should be more accurate.
+        integrateThirdMoment true;
+
+        lift
+        {
+            type    Tomiyama;
+
+            aspectRatio
+            {
+                type    Wellek;
+            }
+        }
+
+        wallDamping
+        {
+            type            cosine;
+            Cd              1.0;
+            zeroWallDist    0;
+        }
+    }
+
+    water_dispersedIn_steam
+    {
+        type    none;
+    }
+}
+
+wallLubrication
+{}
+
+turbulentDispersion
+{
+    steam_dispersedIn_water
+    {
+        type    Burns;
+        sigma   1;
+    }
+
+    water_dispersedIn_steam
+    {
+        type    none;
+    }
+}

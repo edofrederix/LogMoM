@@ -1,0 +1,99 @@
+sample
+{
+    type            sets;
+    libs            ("libsampling.so");
+    writeControl    writeTime;
+    log             on;
+
+    interpolationScheme cellPointFace;
+
+    setFormat       raw;
+
+    sets
+    (
+        z0
+        {
+            type    lineUniform;
+            nPoints 128;
+            start   (0 0 0);
+            end     (0 0 9.442);
+        }
+
+        r_z1m
+        {
+            type    lineUniform;
+            nPoints 128;
+            start   (0 0 1);
+            end     (1.1083 1.1083 1);
+        }
+
+        r_z2m
+        {
+            type    lineUniform;
+            nPoints 128;
+            start   (0 0 2);
+            end     (1.1083 1.1083 2);
+        }
+
+        r_z3m
+        {
+            type    lineUniform;
+            nPoints 128;
+            start   (0 0 3);
+            end     (1.1083 1.1083 3);
+        }
+
+        r_z4m
+        {
+            type    lineUniform;
+            nPoints 128;
+            start   (0 0 4);
+            end     (1.1083 1.1083 4);
+        }
+
+        r_z5m
+        {
+            type    lineUniform;
+            nPoints 128;
+            start   (0 0 5);
+            end     (1.1083 1.1083 5);
+        }
+
+        r_z6m
+        {
+            type    lineUniform;
+            nPoints 128;
+            start   (0 0 6);
+            end     (1.1083 1.1083 6);
+        }
+
+        r_z7m
+        {
+            type    lineUniform;
+            nPoints 128;
+            start   (0 0 7);
+            end     (1.1083 1.1083 7);
+        }
+
+        r_z8m
+        {
+            type    lineUniform;
+            nPoints 128;
+            start   (0 0 8);
+            end     (1.1083 1.1083 8);
+        }
+
+        r_z9m
+        {
+            type    lineUniform;
+            nPoints 128;
+            start   (0 0 9);
+            end     (1.1083 1.1083 9);
+        }
+    );
+
+    fields
+    (
+        #include "sampleFields"
+    );
+}

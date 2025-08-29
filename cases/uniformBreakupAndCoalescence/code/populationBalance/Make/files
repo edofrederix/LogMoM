@@ -1,0 +1,7 @@
+coalescenceModels = coalescenceModels
+$(coalescenceModels)/noCoalescence/noCoalescence.C
+
+binaryBreakupModels = binaryBreakupModels
+$(binaryBreakupModels)/noBinaryBreakup/noBinaryBreakup.C
+
+LIB = libpopulationBalance

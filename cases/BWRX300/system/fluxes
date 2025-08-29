@@ -1,0 +1,79 @@
+inletHighSteam
+{
+    type            surfaceFieldValue;
+    patch           inlet_high;
+    fields          (alphaRhoPhi.steam);
+    operation       sum;
+    writeControl    timeStep;
+    writeFields     false;
+}
+
+inletHighWater
+{
+    type            surfaceFieldValue;
+    patch           inlet_high;
+    fields          (alphaRhoPhi.water);
+    operation       sum;
+    writeControl    timeStep;
+    writeFields     false;
+}
+
+inletMediumSteam
+{
+    type            surfaceFieldValue;
+    patch           inlet_medium;
+    fields          (alphaRhoPhi.steam);
+    operation       sum;
+    writeControl    timeStep;
+    writeFields     false;
+}
+
+inletMediumWater
+{
+    type            surfaceFieldValue;
+    patch           inlet_medium;
+    fields          (alphaRhoPhi.water);
+    operation       sum;
+    writeControl    timeStep;
+    writeFields     false;
+}
+
+inletLowSteam
+{
+    type            surfaceFieldValue;
+    patch           inlet_low;
+    fields          (alphaRhoPhi.steam);
+    operation       sum;
+    writeControl    timeStep;
+    writeFields     false;
+}
+
+inletLowWater
+{
+    type            surfaceFieldValue;
+    patch           inlet_low;
+    fields          (alphaRhoPhi.water);
+    operation       sum;
+    writeControl    timeStep;
+    writeFields     false;
+}
+
+outletSteam
+{
+    type            surfaceFieldValue;
+    patch           outlet;
+    fields          (alphaRhoPhi.steam);
+    operation       sum;
+    writeControl    timeStep;
+    writeFields     false;
+}
+
+outletWater
+{
+    type            surfaceFieldValue;
+    patch           outlet;
+    fields          (alphaRhoPhi.water);
+    operation       sum;
+    writeControl    timeStep;
+    writeFields     false;
+}

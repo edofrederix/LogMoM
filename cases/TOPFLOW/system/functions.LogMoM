@@ -1,0 +1,131 @@
+// Inlet moment fluxes [m^gamma/s]
+
+inletPhiN
+{
+    type            surfaceFieldValue;
+    patch           inlet;
+    fields          (N.air);
+    operation       sum;
+    weightField     phi.air;
+    writeControl    writeTime;
+    writeFields     false;
+}
+
+inletPhiA
+{
+    type            surfaceFieldValue;
+    patch           inlet;
+    fields          (A.air);
+    operation       sum;
+    weightField     phi.air;
+    writeControl    writeTime;
+    writeFields     false;
+}
+
+inletPhiAlpha
+{
+    type            surfaceFieldValue;
+    patch           inlet;
+    fields          (alpha.air);
+    operation       sum;
+    weightField     phi.air;
+    writeControl    writeTime;
+    writeFields     false;
+}
+
+// Outlet moment fluxes [m^gamma/s]
+
+outletPhiN
+{
+    type            surfaceFieldValue;
+    patch           outlet;
+    fields          (N.air);
+    operation       sum;
+    weightField     phi.air;
+    writeControl    writeTime;
+    writeFields     false;
+}
+
+outletPhiA
+{
+    type            surfaceFieldValue;
+    patch           outlet;
+    fields          (A.air);
+    operation       sum;
+    weightField     phi.air;
+    writeControl    writeTime;
+    writeFields     false;
+}
+
+outletPhiAlpha
+{
+    type            surfaceFieldValue;
+    patch           outlet;
+    fields          (alpha.air);
+    operation       sum;
+    weightField     phi.air;
+    writeControl    writeTime;
+    writeFields     false;
+}
+
+// Inlet fluxes [m^3/s]
+
+inletPhi
+{
+    type            surfaceFieldValue;
+    patch           inlet;
+    fields          (phi.air phi.air phi.air);
+    operation       sum;
+    writeControl    writeTime;
+    writeFields     false;
+}
+
+// Outlet fluxes [m^3/s]
+
+outletPhi
+{
+    type            surfaceFieldValue;
+    patch           outlet;
+    fields          (phi.air phi.air phi.air);
+    operation       sum;
+    writeControl    writeTime;
+    writeFields     false;
+}
+
+/*
+
+// Forces
+
+forces0
+{
+    type            LogMoMForces;
+    phase           air;
+    gamma           0;
+    executeControl  writeTime;
+    writeControl    writeTime;
+}
+
+forces2
+{
+    type            LogMoMForces;
+    phase           air;
+    gamma           2;
+    executeControl  writeTime;
+    writeControl    writeTime;
+}
+
+forces3
+{
+    type            LogMoMForces;
+    phase           air;
+    gamma           3;
+    executeControl  writeTime;
+    writeControl    writeTime;
+}
+
+*/
+
+// Write fields
+
+#includeFunc    writeObjects(d.air)
+#includeFunc    writeObjects(sigma.air)

@@ -1,0 +1,26 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      topoSetDict;
+}
+
+actions
+(
+    {
+        name    x0;
+        type    faceSet;
+        action  new;
+        source  boxToFace;
+        box     (-1e-5 -99 -99)(1e-5 99 99);
+    }
+
+    {
+        name    y0;
+        type    faceSet;
+        action  new;
+        source  boxToFace;
+        box     (-99 -1e-5 -99)(99 1e-5 99);
+    }
+);

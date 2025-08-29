@@ -1,0 +1,43 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      fvModels;
+}
+
+phaseTurbulenceStabilisationSteam
+{
+    type    phaseTurbulenceStabilisation;
+
+    libs    ("libmultiphaseEulerFvModels.so");
+
+    phase   steam;
+
+    alphaInversion  0.1;
+}
+
+phaseTurbulenceStabilisationWater
+{
+    type    phaseTurbulenceStabilisation;
+
+    libs    ("libmultiphaseEulerFvModels.so");
+
+    phase   water;
+
+    alphaInversion  0.1;
+}
+
+phaseChange
+{
+    type            heatTransferLimitedPhaseChange;
+    libs            ("libmultiphaseEulerFvModels.so");
+
+    phases          (steam water);
+
+    energySemiImplicit yes;
+    pressureImplicit no;
+
+    #include "saturationTemperature"
+}

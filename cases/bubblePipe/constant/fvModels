@@ -1,0 +1,18 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      fvModels;
+}
+
+massSource
+{
+    type            massSource;
+
+    phase           air;
+
+    cellZone        injection;
+
+    massFlowRate    6e-7;
+}

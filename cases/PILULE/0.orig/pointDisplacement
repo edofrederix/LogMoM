@@ -1,0 +1,39 @@
+FoamFile
+{
+    version     2.0;
+    format      binary;
+    class       pointVectorField;
+    object      pointDisplacement;
+}
+
+dimensions      [0 1 0 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    wall_cylinder
+    {
+        type            calculated;
+        value           uniform (0 0 0);
+    }
+
+    inlet
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+
+    outlet
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+
+
+    wall_pipe
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+}

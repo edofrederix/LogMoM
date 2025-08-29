@@ -1,0 +1,8 @@
+#!/bin/bash
+
+WM_NCOMPPROCS=${WM_NCOMPPROCS:-4}
+
+wmakeLnIncludeAll -j $WM_NCOMPPROCS src
+
+wmake -a -s src
+wmake -a -s applications

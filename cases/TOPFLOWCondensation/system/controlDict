@@ -1,0 +1,193 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+
+application     foamRun;
+
+solver          multiphaseEuler;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         10;
+
+deltaT          1e-3;
+
+writeControl    adjustableRunTime;
+
+writeInterval   1;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   10;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.4;
+
+maxDeltaT       1;
+
+libs
+(
+    "libLogMoM.so"
+    "libfieldFunctionObjects.so"
+);
+
+functions
+{
+    #include "functions"
+
+    // Inlet flow rates
+
+    inletPhiAlphaSteam
+    {
+        type            surfaceFieldValue;
+        patch           inlet;
+        fields          (alpha.steam);
+        operation       sum;
+        weightField     phi.steam;
+        writeControl    writeTime;
+        writeFields     false;
+    }
+
+    inletPhiAlphaWater
+    {
+        type            surfaceFieldValue;
+        patch           inlet;
+        fields          (alpha.water);
+        operation       sum;
+        weightField     phi.water;
+        writeControl    writeTime;
+        writeFields     false;
+    }
+
+    // Radial values at sample heights
+
+    radialValues
+    {
+        type                sets;
+        libs                ("libsampling.so");
+        writeControl        writeTime;
+
+        interpolationScheme cellPoint;
+
+        setFormat           raw;
+        name                samples;
+
+        sets
+        (
+            A-or-B
+            {
+                type    lineUniform;
+                axis    x;
+                start   (0.0001 0.0001 0);
+                end     (0.0974 0.0001 0);
+                nPoints 64;
+            }
+
+            C-relative-to-A
+            {
+                type    lineUniform;
+                axis    x;
+                start   (0.0001 0.114 0);
+                end     (0.0974 0.114 0);
+                nPoints 64;
+            }
+
+            F-relative-to-A
+            {
+                type    lineUniform;
+                axis    x;
+                start   (0.0001 0.387 0);
+                end     (0.0974 0.387 0);
+                nPoints 64;
+            }
+
+            I-relative-to-A
+            {
+                type    lineUniform;
+                axis    x;
+                start   (0.0001 1.331 0);
+                end     (0.0974 1.331 0);
+                nPoints 64;
+            }
+
+            L-relative-to-A
+            {
+                type    lineUniform;
+                axis    x;
+                start   (0.0001 2.374 0);
+                end     (0.0974 2.374 0);
+                nPoints 64;
+            }
+
+            O-relative-to-A
+            {
+                type    lineUniform;
+                axis    x;
+                start   (0.0001 4.310 0);
+                end     (0.0974 4.310 0);
+                nPoints 64;
+            }
+
+            E-relative-to-B
+            {
+                type    lineUniform;
+                axis    x;
+                start   (0.0001 0.273 0);
+                end     (0.0974 0.273 0);
+                nPoints 64;
+            }
+
+            H-relative-to-B
+            {
+                type    lineUniform;
+                axis    x;
+                start   (0.0001 1.217 0);
+                end     (0.0974 1.217 0);
+                nPoints 64;
+            }
+
+            K-relative-to-B
+            {
+                type    lineUniform;
+                axis    x;
+                start   (0.0001 2.260 0);
+                end     (0.0974 2.260 0);
+                nPoints 64;
+            }
+
+            N-relative-to-B
+            {
+                type    lineUniform;
+                axis    x;
+                start   (0.0001 4.196 0);
+                end     (0.0974 4.196 0);
+                nPoints 64;
+            }
+        );
+
+        fields
+        (
+            #include "sampleFields"
+        );
+    }
+}

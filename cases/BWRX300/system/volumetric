@@ -1,0 +1,39 @@
+alphaSteamWeighted
+{
+    type            volFieldValue;
+    libs            ("libfieldFunctionObjects.so");
+
+    operation       volAverage;
+    weightField     alpha.steam;
+
+    cellZone        all;
+
+    fields
+    (
+        d.steam
+        lambda.steam
+        kappa.steam
+        U.steam
+    );
+
+    writeFields     no;
+    log             no;
+}
+
+alphaSteam
+{
+    type            volFieldValue;
+    libs            ("libfieldFunctionObjects.so");
+
+    operation       volAverage;
+
+    cellZone        all;
+
+    fields
+    (
+        alpha.steam
+    );
+
+    writeFields     no;
+    log             no;
+}

@@ -1,0 +1,31 @@
+inletHighPressure
+{
+    type            surfaceFieldValue;
+    patch           inlet_high;
+    fields          (p);
+    operation       average;
+    writeControl    timeStep;
+    writeFields     false;
+}
+
+inletMediumPressure
+{
+    type            surfaceFieldValue;
+    patch           inlet_medium;
+    fields          (p);
+    operation       average;
+    weightField     phi.steam;
+    writeControl    timeStep;
+    writeFields     false;
+}
+
+inletLowPressure
+{
+    type            surfaceFieldValue;
+    patch           inlet_low;
+    fields          (p);
+    operation       average;
+    weightField     phi.steam;
+    writeControl    timeStep;
+    writeFields     false;
+}

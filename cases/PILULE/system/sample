@@ -1,0 +1,67 @@
+sample
+{
+    type            sets;
+    libs            ("libsampling.so");
+    writeControl    writeTime;
+    log             on;
+
+    interpolationScheme cellPointFace;
+
+    setFormat       raw;
+
+    sets
+    (
+        z30mm_x
+        {
+            type    lineUniform;
+            nPoints 64;
+            start   (0 0 0.036);
+            end     (0.019 0 0.036);
+        }
+
+        z40mm_x
+        {
+            type    lineUniform;
+            nPoints 64;
+            start   (0 0 0.046);
+            end     (0.019 0 0.046);
+        }
+
+        z50mm_x
+        {
+            type    lineUniform;
+            nPoints 64;
+            start   (0 0 0.056);
+            end     (0.019 0 0.056);
+        }
+
+        z30mm_y
+        {
+            type    lineUniform;
+            nPoints 64;
+            start   (0 0 0.036);
+            end     (0 0.019 0.036);
+        }
+
+        z40mm_y
+        {
+            type    lineUniform;
+            nPoints 64;
+            start   (0 0 0.046);
+            end     (0 0.019 0.046);
+        }
+
+        z50mm_y
+        {
+            type    lineUniform;
+            nPoints 64;
+            start   (0 0 0.056);
+            end     (0 0.019 0.056);
+        }
+    );
+
+    fields
+    (
+        #include "sampleFields"
+    );
+}

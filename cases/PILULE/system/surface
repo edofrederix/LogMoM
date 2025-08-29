@@ -1,0 +1,43 @@
+surface
+{
+    type            surfaces;
+    libs            ("libsampling.so");
+    writeControl    writeTime;
+    log             on;
+
+    interpolationScheme cellPointFace;
+
+    surfaceFormat   raw;
+
+    surfaces
+    (
+        z30mm
+        {
+            type        cutPlane;
+            planeType   pointAndNormal;
+            point       (0 0 0.036);
+            normal      (0 0 1);
+        }
+
+        z40mm
+        {
+            type        cutPlane;
+            planeType   pointAndNormal;
+            point       (0 0 0.046);
+            normal      (0 0 1);
+        }
+
+        z50mm
+        {
+            type        cutPlane;
+            planeType   pointAndNormal;
+            point       (0 0 0.056);
+            normal      (0 0 1);
+        }
+    );
+
+    fields
+    (
+        #include "sampleFields"
+    );
+}

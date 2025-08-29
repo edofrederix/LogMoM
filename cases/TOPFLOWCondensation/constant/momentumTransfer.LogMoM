@@ -1,0 +1,128 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      momentumTransfer;
+}
+
+drag
+{
+    steam_dispersedIn_water
+    {
+        type            LogMoM;
+        mode            quadrature;
+        GaussHermite    3;
+
+        drag
+        {
+            type        TomiyamaKataokaZunSakaguchi;
+            // type        IshiiZuber;
+
+            residualRe  1e-3;
+            residualEo  1e-3;
+        }
+    }
+
+    water_dispersedIn_steam
+    {
+        type        SchillerNaumann;
+        residualRe  1e-3;
+    }
+
+    steam_segregatedWith_water
+    {
+        type    segregated;
+        m       0.5;
+        n       8;
+    }
+}
+
+virtualMass
+{
+    steam_dispersedIn_water
+    {
+        type    constantCoefficient;
+        Cvm     0.5;
+    }
+
+    water_dispersedIn_steam
+    {
+        type    constantCoefficient;
+        Cvm     0.5;
+    }
+}
+
+lift
+{
+    steam_dispersedIn_water
+    {
+        type    wallDamped;
+
+        lift
+        {
+            type            LogMoM;
+            mode            quadrature;
+            GaussHermite    3;
+
+            lift
+            {
+                type    Sugrue;
+                // type    Tomiyama;
+
+                aspectRatio
+                {
+                    type    Wellek;
+                }
+            }
+        }
+
+        wallDamping
+        {
+            type                linear;
+            Cd                  1;
+            zeroInNearWallCells true;
+        }
+    }
+
+    water_dispersedIn_steam
+    {
+        type    none;
+    }
+}
+
+wallLubrication
+{
+    steam_dispersedIn_water
+    {
+        type    Antal;
+        // type    Frank;
+
+        // Frank coefficients
+        Cwc     10;
+        Cwd     6.8;
+        p       1.7;
+
+        // Antal coefficients
+        Cw1     -0.01;
+        Cw2     0.05;
+    }
+
+    water_dispersedIn_steam
+    {
+        type    none;
+    }
+}
+
+turbulentDispersion
+{
+    steam_dispersedIn_water
+    {
+        type    Burns;
+        sigma   1;
+    }
+
+    water_dispersedIn_steam
+    {
+        type    none;
+    }
+}
