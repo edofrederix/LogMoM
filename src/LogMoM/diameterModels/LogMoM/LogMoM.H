@@ -28,32 +28,19 @@ class LogMoM
 {
     // Private Data
 
-        //- The representative diameter
+        //- The Sauter-mean diameter
         volScalarField d_;
-
-        //- Representative diameter coefficients (defaults to p = 3 and q = 2,
-        //  i.e., the Sauter-mean diameter)
-        scalar p_;
-        scalar q_;
 
         //- Continuous phase
         mutable const phaseModel* continuousPhasePtr_;
 
-        // Main moment fields which are solved for
+        // Scaled moment fields
 
-            //- Number concentration (per cm^3)
-            volScalarField N_;
-
-            //- Interfacial area
-            volScalarField A_;
-
-        // Limited moment fields shadowing the main ones
-
-            //- Limited and scaled number concentration (per cm^3)
+            //- Scaled number concentration (per cm^3)
             volScalarField lambda_;
 
-            //- Limited and scaled interfacial area
-            volScalarField kappa_;
+            //- Scaled interfacial area
+            volScalarField kappai_;
 
         // Log-normal size distribution parameters
 
@@ -90,17 +77,12 @@ class LogMoM
 
     // Private Member Functions
 
-        // Correction Functions
+        //- Limit the moments
+        void limitMoments();
 
-            //- Correct limited moments from the normal ones
-            void correctLimitedMoments();
-
-            //- Correct the size distribution parameters (dcm and sigma) from
-            //  the limited moments
-            void correctDistribution();
-
-            //- Correct the representative diameter
-            void correctRepresentativeDiameter();
+        //- Correct the size distribution parameters (dcm and sigma) from the
+        //  scaled moments
+        void correctDistribution();
 
 public:
 
@@ -129,28 +111,16 @@ public:
 
     // Member Functions
 
-        //- Number concentration (per cm^3)
-        inline const volScalarField& N() const
-        {
-            return N_;
-        }
-
-        //- Interfacial area
-        inline const volScalarField& A() const
-        {
-            return A_;
-        }
-
-        //- Limited and scaled number concentration (per cm^3)
+        //- Scaled number concentration (per cm^3)
         inline const volScalarField& lambda() const
         {
             return lambda_;
         }
 
-        //- Limited and scaled interfacial area
-        inline const volScalarField& kappa() const
+        //- Scaled interfacial area
+        inline const volScalarField& kappai() const
         {
-            return kappa_;
+            return kappai_;
         }
 
         //- Count median diameter
@@ -171,7 +141,7 @@ public:
             return gamma_;
         }
 
-        //- Get the diameter field
+        //- Get the Sauter-mean diameter field
         virtual tmp<volScalarField> d() const
         {
             return d_;
@@ -180,7 +150,7 @@ public:
         //- Get the surface area per unit volume field
         virtual tmp<volScalarField> Av() const
         {
-            return A_;
+            return phase()*kappai_;
         }
 
         //- Return continuous phase
@@ -209,7 +179,7 @@ public:
         //- Return the dispersed interface
         dispersedPhaseInterface interface() const;
 
-        //- Return the diameter based on moment p and q
+        //- Compute the diameter based on moment p and q of the distribution
         virtual tmp<volScalarField> d
         (
             const scalar p,

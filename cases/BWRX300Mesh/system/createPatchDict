@@ -6,28 +6,26 @@ FoamFile
 }
 
 patches
-(
+{
+    symm_x0
     {
-        name    symm_x0;
-
         patchInfo
         {
             type    symmetry;
         }
 
-        constructFrom   set;
-        set             x0;
+        constructFrom   zone;
+        zone            x0;
     }
 
+    symm_y0
     {
-        name    symm_y0;
-
         patchInfo
         {
             type    symmetry;
         }
 
-        constructFrom   set;
-        set             y0;
+        constructFrom   zone;
+        zone            y0;
     }
-);
+}

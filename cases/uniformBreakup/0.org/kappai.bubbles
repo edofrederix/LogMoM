@@ -3,7 +3,7 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      kappa.steam;
+    object      kappai.bubbles;
 }
 
 dimensions      [0 -1 0 0 0 0 0];
@@ -15,14 +15,5 @@ boundaryField
     empties
     {
         type            empty;
-    }
-
-}
-
-sources
-{
-    phaseChange
-    {
-        type            interfacialGrowthMoment;
     }
 }

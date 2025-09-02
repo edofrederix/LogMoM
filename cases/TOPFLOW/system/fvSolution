@@ -38,7 +38,7 @@ solvers
         relTol          0;
     }
 
-    "(U|N|A).*"
+    "(U|lambda|kappai)\..*"
     {
         solver          smoothSolver;
         smoother        symGaussSeidel;
@@ -47,7 +47,7 @@ solvers
         minIter         1;
     }
 
-    "e.*"
+    "(e|h)\..*"
     {
         solver          smoothSolver;
         smoother        symGaussSeidel;
@@ -55,7 +55,7 @@ solvers
         relTol          0;
     }
 
-    "(k|epsilon|omega|Theta).*"
+    "(k|epsilon|omega|Theta)\..*"
     {
         solver          smoothSolver;
         smoother        symGaussSeidel;
@@ -64,7 +64,7 @@ solvers
         minIter         1;
     }
 
-    "f.*"
+    "f\..*"
     {
         solver          PBiCGStab;
         preconditioner  DILU;

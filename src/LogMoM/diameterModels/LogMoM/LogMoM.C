@@ -21,49 +21,41 @@ namespace diameterModels
 
 // * * * * * * * * * * * * Private Member Functions * * * * * * * * * * * * //
 
-void Foam::diameterModels::LogMoM::correctLimitedMoments()
+void Foam::diameterModels::LogMoM::limitMoments()
 {
     // To assure that the Sauter-mean diameter is in between dMin and dMax, the
     // scaled interfacial area is limited accordingly. To assure realizability
     // (i.e., a real non-negative sigma), we must satisfy the relation lambda >=
-    // kappa^3/(36*1e6*pi). This condition can be derived from Eq. (9) in
+    // kappai^3/(36*1e6*pi). This condition can be derived from Eq. (9) in
     // Habiyaremye et al., (2022). This condition is extended to assure that the
     // size distribution width remains between sigmaMin and sigmaMax.
 
-    const volScalarField& alpha = phase();
-    const dimensionedScalar residualAlpha(phase().residualAlpha());
-
     const scalar pi(constant::mathematical::pi);
 
-    const volScalarField alphar(max(alpha,residualAlpha));
+    const dimensionedScalar kappaiMin(6.0/dMax_);
+    const dimensionedScalar kappaiMax(6.0/dMin_);
 
-    const dimensionedScalar kappaMin(6.0/dMax_);
-    const dimensionedScalar kappaMax(6.0/dMin_);
-
-    kappa_ = min(max(A_/alphar, kappaMin), kappaMax);
-    kappa_.correctBoundaryConditions();
+    kappai_ = min(max(kappai_, kappaiMin), kappaiMax);
+    kappai_.correctBoundaryConditions();
 
     const volScalarField lambdaMin
     (
-        pow(kappa_,3.0)/(36.0*pi*1e6)
+        pow(kappai_,3.0)/(36.0*pi*1e6)
       * exp(3.0*sqr(sigmaMin_))
     );
 
     const volScalarField lambdaMax
     (
-        pow(kappa_,3.0)/(36.0*pi*1e6)
+        pow(kappai_,3.0)/(36.0*pi*1e6)
       * exp(3.0*sqr(sigmaMax_))
     );
 
-    lambda_ = min(max(N_/alphar, lambdaMin), lambdaMax);
+    lambda_ = min(max(lambda_, lambdaMin), lambdaMax);
     lambda_.correctBoundaryConditions();
 }
 
 void Foam::diameterModels::LogMoM::correctDistribution()
 {
-    // Update the width and count median diameter of the size distribution from
-    // the limited moments
-
     const scalar pi(constant::mathematical::pi);
 
     sigma_ =
@@ -73,18 +65,13 @@ void Foam::diameterModels::LogMoM::correctDistribution()
             (
                 max
                 (
-                    cbrt(36.0*pi*1e6*lambda_)/kappa_,
+                    cbrt(36.0*pi*1e6*lambda_)/kappai_,
                     dimensionedScalar(dimless, 1.0)
                 )
             )
         );
 
-    dcm_ = 6.0/kappa_*exp(-2.5*sqr(sigma_));
-}
-
-void Foam::diameterModels::LogMoM::correctRepresentativeDiameter()
-{
-    d_ = d(p_, q_);
+    dcm_ = 6.0/kappai_*exp(-2.5*sqr(sigma_));
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -118,33 +105,7 @@ Foam::diameterModels::LogMoM::LogMoM
         phase.mesh(),
         dimensionedScalar(dimLength, 0.0)
     ),
-    p_(diameterProperties.lookupOrDefault<scalar>("p", 3)),
-    q_(diameterProperties.lookupOrDefault<scalar>("q", 2)),
     continuousPhasePtr_(nullptr),
-    N_
-    (
-        IOobject
-        (
-            IOobject::groupName("N", phase.name()),
-            phase.mesh().time().name(),
-            phase.mesh(),
-            IOobject::MUST_READ,
-            IOobject::AUTO_WRITE
-        ),
-        phase.mesh()
-    ),
-    A_
-    (
-        IOobject
-        (
-            IOobject::groupName("A", phase.name()),
-            phase.mesh().time().name(),
-            phase.mesh(),
-            IOobject::MUST_READ,
-            IOobject::AUTO_WRITE
-        ),
-        phase.mesh()
-    ),
     lambda_
     (
         IOobject
@@ -152,24 +113,22 @@ Foam::diameterModels::LogMoM::LogMoM
             IOobject::groupName("lambda", phase.name()),
             phase.mesh().time().name(),
             phase.mesh(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
+            IOobject::MUST_READ,
+            IOobject::AUTO_WRITE
         ),
-        phase.mesh(),
-        dimensionedScalar(N_.dimensions(), 0.0)
+        phase.mesh()
     ),
-    kappa_
+    kappai_
     (
         IOobject
         (
-            IOobject::groupName("kappa", phase.name()),
+            IOobject::groupName("kappai", phase.name()),
             phase.mesh().time().name(),
             phase.mesh(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
+            IOobject::MUST_READ,
+            IOobject::AUTO_WRITE
         ),
-        phase.mesh(),
-        dimensionedScalar(A_.dimensions(), 0.0)
+        phase.mesh()
     ),
     dcm_
     (
@@ -211,20 +170,20 @@ Foam::diameterModels::LogMoM::LogMoM
         dimless,
         diameterProperties.lookupOrDefault<scalar>("sigmaMax", 2)
     ),
-    nCorr_(diameterProperties.lookupOrDefault<label>("nCorr", 2)),
     sources_(diameterProperties.lookup("sources"), LogMoMSource::iNew(*this)),
     gamma_(3),
     fields_()
 {
-    // Correct the LogMoM model
+    // Correct the LogMoM model. Do not limit the moments yet during
+    // construction because the boundary update in the limit procedure may
+    // require fields that do not yet exist.
 
-    correctLimitedMoments();
     correctDistribution();
-    correctRepresentativeDiameter();
+    d_ = d(3,2);
 
     // Add fields to the multivariate convection scheme field table
 
-    fields_.add(kappa_);
+    fields_.add(kappai_);
     fields_.add(lambda_);
 }
 
@@ -257,8 +216,9 @@ Foam::tmp<Foam::volScalarField> Foam::diameterModels::LogMoM::d
     const scalar q
 ) const
 {
-    // Calculate the diameter that is related to moment p and q, see Frederix et
-    // al. (2019), Eq. (26).
+    // Calculate the diameter that is related to the moments p and q, see
+    // Frederix et al. (2019), Eq. (26). The calculation uses the size
+    // distribution parameters because they are correctly limited.
 
     return min(max(dcm_*exp((p + q)/2.0*sqr(sigma_)), dMin_), dMax_);
 }
@@ -272,7 +232,7 @@ void Foam::diameterModels::LogMoM::correct()
 
     // Initialise the accumulated source terms to the dilatation effect
 
-    fvScalarMatrix R0(N_, inv(dimTime));
+    fvScalarMatrix R0(lambda_, inv(dimTime));
 
     fvScalarMatrix R2
     (
@@ -283,7 +243,7 @@ void Foam::diameterModels::LogMoM::correct()
                 (fvc::ddt(alpha) + fvc::div(phase().alphaPhi()))
               - (fvc::ddt(alpha, rho) + fvc::div(phase().alphaRhoPhi()))/rho
             ),
-            A_
+            kappai_
         )
     );
 
@@ -291,8 +251,8 @@ void Foam::diameterModels::LogMoM::correct()
 
     forAll(sources_, j)
     {
-        R0 += sources_[j].R(N_);
-        R2 += sources_[j].R(A_);
+        R0 += sources_[j].R(lambda_);
+        R2 += sources_[j].R(kappai_);
     }
 
     const volScalarField alphar(max(alpha, phase().residualAlpha()));
@@ -302,79 +262,104 @@ void Foam::diameterModels::LogMoM::correct()
     const Foam::fvConstraints& fvConstraints =
         Foam::fvConstraints::New(phase().mesh());
 
-    for (int corr = 0; corr < nCorr_; corr++)
-    {
-        tmp<fv::convectionScheme<scalar>> mvConvection
+    tmp<fv::convectionScheme<scalar>> mvConvection
+    (
+        fv::convectionScheme<scalar>::New
         (
-            fv::convectionScheme<scalar>::New
+            phase().mesh(),
+            fields_,
+            alphaPhi,
+            phase().mesh().schemes().div
             (
-                phase().mesh(),
-                fields_,
-                alphaPhi,
-                phase().mesh().schemes().div
-                (
-                    "div("+phi.name()+","+alpha.name()+")"
-                )
+                "div("+phi.name()+","+alpha.name()+")"
             )
-        );
+        )
+    );
 
-        fvScalarMatrix AEqn
+    const dimensionedScalar deltaT(phase().mesh().time().deltaT());
+
+    // Interfacial area concentration equation
+
+    fvScalarMatrix kappaiEqn
+    (
+        fvm::ddt(alpha, kappai_)
+      + mvConvection->fvmDiv(alphaPhi, kappai_)
+        ==
+        R2
+      + fvModels.source(alpha, rho, kappai_)/rho
+      - correction
         (
-            fvm::ddt(A_)
-          + mvConvection->fvcDiv(alphaPhi, kappa_)
-            ==
-            R2
-          + fvModels.source(alpha, rho, A_)/(alphar*rho)
-        );
+            fvm::Sp
+            (
+                max(phase().residualAlpha() - alpha, scalar(0))/deltaT,
+                kappai_
+            )
+        )
+    );
 
-        AEqn.relax();
-        fvConstraints.constrain(AEqn);
+    kappaiEqn.relax();
+    fvConstraints.constrain(kappaiEqn);
+    kappaiEqn.solve();
+    fvConstraints.constrain(kappai_);
 
-        A_ = AEqn.H()/AEqn.A();
-        A_.correctBoundaryConditions();
+    // Number concentration equation
 
-        fvConstraints.constrain(A_);
-
-        fvScalarMatrix NEqn
+    fvScalarMatrix lambdaEqn
+    (
+        fvm::ddt(alpha, lambda_)
+      + mvConvection->fvmDiv(alphaPhi, lambda_)
+        ==
+        R0
+      + fvModels.source(alpha, rho, lambda_)/rho
+      - correction
         (
-            fvm::ddt(N_)
-          + mvConvection->fvcDiv(alphaPhi, lambda_)
-            ==
-            R0
-          + fvModels.source(alpha, rho, N_)/(alphar*rho)
-        );
+            fvm::Sp
+            (
+                max(phase().residualAlpha() - alpha, scalar(0))/deltaT,
+                lambda_
+            )
+        )
+    );
 
-        NEqn.relax();
-        fvConstraints.constrain(NEqn);
+    lambdaEqn.relax();
+    fvConstraints.constrain(lambdaEqn);
+    lambdaEqn.solve();
+    fvConstraints.constrain(lambda_);
 
-        N_ = NEqn.H()/NEqn.A();
-        N_.correctBoundaryConditions();
+    // Limit the moments and then update the distribution from those
 
-        fvConstraints.constrain(N_);
-
-        // Correct limited moments and update the main moments from those
-
-        correctLimitedMoments();
-
-        A_ = kappa_*alpha;
-        N_ = lambda_*alpha;
-
-        A_.correctBoundaryConditions();
-        N_.correctBoundaryConditions();
-    }
-
+    limitMoments();
     correctDistribution();
-    correctRepresentativeDiameter();
 
-    Info<< A_.name() << ", min, max = "
-        << gAverage(A_) << " "
-        << gMin(A_) << " "
-        << gMax(A_) << endl;
+    // Set the Sauter-mean diameter as the representative size
 
-    Info<< N_.name() << ", min, max = "
-        << gAverage(N_) << " "
-        << gMin(N_) << " "
-        << gMax(N_) << endl;
+    d_ = d(3,2);
+
+    // Print some useful numbers
+
+    Info<< type() << ": " << phase().name() << endl << incrIndent;
+
+    Info<< indent << "min/mean/max " << kappai_.name() << " "
+        << gMin(kappai_) << " "
+        << gAverage(kappai_) << " "
+        << gMax(kappai_) << endl;
+
+    Info<< indent << "min/mean/max " << lambda_.name() << " "
+        << gMin(lambda_) << " "
+        << gAverage(lambda_) << " "
+        << gMax(lambda_) << endl;
+
+    Info<< indent << "min/mean/max " << d_.name() << " "
+        << gMin(d_) << " "
+        << gAverage(d_) << " "
+        << gMax(d_) << endl;
+
+    Info<< indent << "min/mean/max " << sigma_.name() << " "
+        << gMin(sigma_) << " "
+        << gAverage(sigma_) << " "
+        << gMax(sigma_) << endl;
+
+    Info<< decrIndent;
 }
 
 Foam::scalar Foam::diameterModels::LogMoM::setGamma(const scalar gamma)
@@ -393,16 +378,11 @@ bool Foam::diameterModels::LogMoM::read(const dictionary& phaseProperties)
 {
     diameterModel::read(phaseProperties);
 
-    p_ = diameterProperties().lookupOrDefault<scalar>("p", 3);
-    q_ = diameterProperties().lookupOrDefault<scalar>("q", 2);
-
     diameterProperties().lookup("dMin") >> dMin_;
     diameterProperties().lookup("dMax") >> dMax_;
 
     sigmaMin_ = diameterProperties().lookupOrDefault<scalar>("sigmaMin", 0);
     sigmaMax_ = diameterProperties().lookupOrDefault<scalar>("sigmaMax", 2);
-
-    nCorr_ = diameterProperties().lookupOrDefault<label>("nCorr", 2);
 
     PtrList<LogMoMSource>
     (

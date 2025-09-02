@@ -10,28 +10,20 @@ using namespace Foam;
 
 int main(int argc, char *argv[])
 {
-    #include "addOverwriteOption.H"
     #include "setRootCase.H"
 
     #include "createTime.H"
     #include "createMeshNoChangers.H"
 
-    const bool overwrite = args.optionFound("overwrite");
     const word oldInstance = mesh.pointsInstance();
 
     pointField points(mesh.points());
-
-    if (!overwrite)
-    {
-        runTime++;
-    }
 
     // Parameters
 
     const scalar hb = 0.2;
     const scalar hc = 9.0 - hb;
     const scalar hsp = 0.2;
-    const scalar S = 2.0;
 
     const scalar R = 1.5675;
     const scalar Rp = 3.0;
@@ -68,11 +60,7 @@ int main(int argc, char *argv[])
     }
 
     mesh.setPoints(points);
-
-    if (overwrite)
-    {
-        mesh.setInstance(oldInstance);
-    }
+    mesh.setInstance(oldInstance);
 
     mesh.write();
 

@@ -39,7 +39,7 @@ solvers
         relTol          0;
     }
 
-    "U.*"
+    "U\..*"
     {
         solver          smoothSolver;
         smoother        symGaussSeidel;
@@ -48,7 +48,7 @@ solvers
         maxIter         0;
     }
 
-    "(lambda|kappa|f).*"
+    "(lambda|kappai|f)\..*"
     {
         solver          smoothSolver;
         smoother        symGaussSeidel;
@@ -57,7 +57,7 @@ solvers
         minIter         1;
     }
 
-    "(e|k|epsilon|h).*"
+    "(e|k|epsilon|h)\..*"
     {
         solver          smoothSolver;
         smoother        symGaussSeidel;

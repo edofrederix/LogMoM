@@ -38,7 +38,7 @@ solvers
         relTol          0;
     }
 
-    "(e|k|h|epsilon|omega|Theta|U|N|A|f).*"
+    "(e|k|h|epsilon|omega|Theta|U|f|lambda|kappai)\..*"
     {
         solver          smoothSolver;
         smoother        symGaussSeidel;
@@ -60,7 +60,7 @@ solvers
         $yPsi;
     }
 
-    "pcorr.*"
+    "pcorr\..*"
     {
         $p_rghFinal;
     }

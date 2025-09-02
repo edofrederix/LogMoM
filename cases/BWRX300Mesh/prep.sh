@@ -16,7 +16,7 @@ runApplication python3 BWRX300.py $MESH -nopopup
 runApplication gmshToFoam BWRX300.msh2
 
 runApplication wmake -s deform
-runApplication ./deform/deform -overwrite
+runApplication ./deform/deform
 
 # Set boundary types
 
@@ -34,8 +34,8 @@ done
 
 # Extract symmetry boundaries
 
-runApplication topoSet
-runApplication createPatch -overwrite
+runApplication createZones
+runApplication createPatch
 
 # Set defaultFaces as the chimney wall
 

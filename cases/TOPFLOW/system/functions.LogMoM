@@ -4,9 +4,9 @@ inletPhiN
 {
     type            surfaceFieldValue;
     patch           inlet;
-    fields          (N.air);
+    fields          (lambda.air);
     operation       sum;
-    weightField     phi.air;
+    weightField     alphaPhi.air;
     writeControl    writeTime;
     writeFields     false;
 }
@@ -15,9 +15,9 @@ inletPhiA
 {
     type            surfaceFieldValue;
     patch           inlet;
-    fields          (A.air);
+    fields          (kappai.air);
     operation       sum;
-    weightField     phi.air;
+    weightField     alphaPhi.air;
     writeControl    writeTime;
     writeFields     false;
 }
@@ -39,9 +39,9 @@ outletPhiN
 {
     type            surfaceFieldValue;
     patch           outlet;
-    fields          (N.air);
+    fields          (lambda.air);
     operation       sum;
-    weightField     phi.air;
+    weightField     alphaPhi.air;
     writeControl    writeTime;
     writeFields     false;
 }
@@ -50,9 +50,9 @@ outletPhiA
 {
     type            surfaceFieldValue;
     patch           outlet;
-    fields          (A.air);
+    fields          (kappai.air);
     operation       sum;
-    weightField     phi.air;
+    weightField     alphaPhi.air;
     writeControl    writeTime;
     writeFields     false;
 }

@@ -39,18 +39,18 @@ if model == 1:
 
     # LogMoM
 
-    A = np.loadtxt('postProcessing/probes/0/A.air')[-1,1]
+    kappai = np.loadtxt('postProcessing/probes/0/kappai.air')[-1,1]
     alpha = np.loadtxt('postProcessing/probes/0/alpha.air')[-1,1]
-    N = np.loadtxt('postProcessing/probes/0/N.air')[-1,1]*1e6
+    lamb = np.loadtxt('postProcessing/probes/0/lambda.air')[-1,1]*1e6
 
-    dsm = 6.0*alpha/A
+    dsm = 6.0/kappai
 
-    sigma = np.sqrt(np.log(N*np.pi/(6.0*alpha)*np.power(dsm,3.0))/3.0)
+    sigma = np.sqrt(np.log(max(lamb*np.pi/6.0*np.power(dsm,3.0),1.0001))/3.0)
 
     dcm = dsm*np.exp(-2.5*sigma**2)
 
     dalphadd = \
-        np.pi*N*np.square(d)/(6.0*sigma*np.sqrt(np.pi*2.0)) \
+        np.pi*lamb*alpha*np.square(d)/(6.0*sigma*np.sqrt(np.pi*2.0)) \
       * np.exp(-np.square(np.log(d/dcm))/(2*np.square(sigma)))
 
     plt.plot([], []) # dummy

@@ -37,28 +37,25 @@ if mode == 1:
 
     d = np.exp(np.linspace(np.log(1e-4), np.log(0.1), 128))
 
-    t = np.loadtxt('postProcessing/probes/0/A.steam')[:,0]
-    A = np.loadtxt('postProcessing/probes/0/A.steam')[:,1]
+    t = np.loadtxt('postProcessing/probes/0/kappai.steam')[:,0]
+    kappai = np.loadtxt('postProcessing/probes/0/kappai.steam')[:,1]
     alpha = np.loadtxt('postProcessing/probes/0/alpha.steam')[:,1]
-    N = np.loadtxt('postProcessing/probes/0/N.steam')[:,1]*1e6
+    lamb = np.loadtxt('postProcessing/probes/0/lambda.steam')[:,1]*1e6
 
     for i in range(0,Nt):
 
         j = int(round((len(t)-1)*float(i)/(Nt-1)))
 
         tj = round(t[j]*10)/10
-        Aj = A[j]
-        alphaj = alpha[j]
-        Nj = N[j]
 
-        dsm = 6.0*alphaj/Aj
+        dsm = 6.0*kappai[j]
 
-        sigma = np.sqrt(np.log(Nj*np.pi/(6.0*alphaj)*np.power(dsm,3.0))/3.0)
+        sigma = np.sqrt(np.log(lamb[j]*np.pi/6.0*np.power(dsm,3.0))/3.0)
 
         dcm = dsm*np.exp(-2.5*sigma**2)
 
         dalphadd = \
-            np.pi*Nj*np.square(d)/(6.0*sigma*np.sqrt(np.pi*2.0)) \
+            np.pi*lamb[j]*alpha[j]*np.square(d)/(6.0*sigma*np.sqrt(np.pi*2.0)) \
           * np.exp(-np.square(np.log(d/dcm))/(2*np.square(sigma)))
 
         plt.plot(d, dalphadd, label=r'$t='+str(tj)+'$')

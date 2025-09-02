@@ -37,27 +37,24 @@ M3_0 = alpha_0*6.0/np.pi
 
 # Plot LogMoM
 
-N = np.loadtxt('postProcessing/probes/0/N.steam')*1e6
-A = np.loadtxt('postProcessing/probes/0/A.steam')
+lamb = np.loadtxt('postProcessing/probes/0/lambda.steam')
+kappai = np.loadtxt('postProcessing/probes/0/kappai.steam')
 alpha = np.loadtxt('postProcessing/probes/0/alpha.steam')
 
 t = alpha[:,0]
 
 fig = plt.figure('A')
-plt.plot(t, A[:,1], label='LogMoM')
+plt.plot(t, kappai[:,1]*alpha[:,1], label='LogMoM')
 
 fig = plt.figure('alpha')
 plt.plot(t, alpha[:,1], label='LogMoM')
 
 fig = plt.figure('dsm')
-plt.plot(t, alpha[:,1]*6/A[:,1], label='LogMoM')
-
-lamb = N[:,1]/np.maximum(alpha[:,1], 1e-6)
-kappa = A[:,1]/np.maximum(alpha[:,1], 1e-6)
+plt.plot(t, 6.0/kappai[:,1], label='LogMoM')
 
 sigma = np.sqrt(
     np.log(
-        (36.0*np.pi*lamb)**(1/3)/kappa
+        (36.0*np.pi*lamb[:,1]*1e6)**(1/3)/kappai[:,1]
     )
 )
 
@@ -99,11 +96,11 @@ alpha = M3*np.pi/6.0
 dsm = M3/M2
 
 lamb = N/np.maximum(alpha, 1e-6)
-kappa = A/np.maximum(alpha, 1e-6)
+kappai = A/np.maximum(alpha, 1e-6)
 
 sigma = np.sqrt(
     np.log(
-        (36.0*np.pi*lamb)**(1.0/3.0)/kappa
+        (36.0*np.pi*lamb)**(1.0/3.0)/kappai
     )
 )
 

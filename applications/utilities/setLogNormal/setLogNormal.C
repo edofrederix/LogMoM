@@ -35,11 +35,11 @@ int main(int argc, char *argv[])
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    volScalarField alpha
+    volScalarField lambda
     (
         IOobject
         (
-            IOobject::groupName("alpha", phaseName),
+            IOobject::groupName("lambda", phaseName),
             runTime.name(),
             mesh,
             IOobject::MUST_READ,
@@ -48,24 +48,11 @@ int main(int argc, char *argv[])
         mesh
     );
 
-    volScalarField N
+    volScalarField kappai
     (
         IOobject
         (
-            IOobject::groupName("N", phaseName),
-            runTime.name(),
-            mesh,
-            IOobject::MUST_READ,
-            IOobject::AUTO_WRITE
-        ),
-        mesh
-    );
-
-    volScalarField A
-    (
-        IOobject
-        (
-            IOobject::groupName("A", phaseName),
+            IOobject::groupName("kappai", phaseName),
             runTime.name(),
             mesh,
             IOobject::MUST_READ,
@@ -78,11 +65,11 @@ int main(int argc, char *argv[])
 
     // The scaled number concentration is per cm^3
 
-    N = 6.0*alpha/pi/pow(dsm,3.0)*exp(3.0*sqr(sigma))/1e6;
-    A = 6.0*alpha/dsm;
+    lambda = 6.0/pi/pow(dsm,3.0)*exp(3.0*sqr(sigma))/1e6;
+    kappai = 6.0/dsm;
 
-    N.write();
-    A.write();
+    lambda.write();
+    kappai.write();
 
     Info<< "end" << endl;
 

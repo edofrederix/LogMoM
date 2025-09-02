@@ -57,6 +57,8 @@ Foam::diameterModels::LogMoMSources::LogMoMBreakup::R
 {
     const scalar pi(constant::mathematical::pi);
 
+    const volScalarField& alpha = logmom_.phase();
+
     const GaussQuadrature& GHQ = GHQ_();
     const GaussQuadrature& GLQ = GLQ_();
 
@@ -72,7 +74,7 @@ Foam::diameterModels::LogMoMSources::LogMoMBreakup::R
         dimensionedScalar(dimless/dimTime, 0)
     );
 
-    if (&moment != &logmom_.N() &&&moment != &logmom_.A())
+    if (&moment != &logmom_.lambda() && &moment != &logmom_.kappai())
     {
         FatalErrorInFunction
             << "Invalid moment field provided" << endl
@@ -118,7 +120,7 @@ Foam::diameterModels::LogMoMSources::LogMoMBreakup::R
 
             if (j == GLQ.size()/2)
             {
-                if (&moment == &logmom_.N())
+                if (&moment == &logmom_.lambda())
                 {
                     R += 0.5/sqrt(pi)*B0*wi*wj*0.5;
                 }
@@ -132,7 +134,7 @@ Foam::diameterModels::LogMoMSources::LogMoMBreakup::R
                 // Symmetry diameter about vi/2
                 const volScalarField dk2(cbrt(pow3(di2) - pow3(dj2)));
 
-                if (&moment == &logmom_.N())
+                if (&moment == &logmom_.lambda())
                 {
                     R += 0.5/sqrt(pi)*B0*wi*wj;
                 }
@@ -144,7 +146,7 @@ Foam::diameterModels::LogMoMSources::LogMoMBreakup::R
         }
     }
 
-    return -fvm::SuSp(-R, moment);
+    return -fvm::SuSp(-R*alpha, moment);
 }
 
 

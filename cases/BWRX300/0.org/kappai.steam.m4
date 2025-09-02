@@ -3,7 +3,7 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      A.steam;
+    object      kappai.steam;
 }
 
 dimensions      [0 -1 0 0 0 0 0];
@@ -12,7 +12,7 @@ internalField   uniform 0.0;
 
 boundaryField
 {
-    inlet
+    "inlet.*"
     {
         type            inletOutletLogNormal;
         phi             phi.steam;
@@ -20,29 +20,20 @@ boundaryField
         dsm             VARDSM;
         value           $internalField;
     }
+
     outlet
-    {
-        type            inletOutletLogNormal;
-        phi             phi.steam;
-        sigma           VARSIGMA;
-        dsm             VARDSM;
-        value           $internalField;
-    }
-    walls
     {
         type            zeroGradient;
     }
-    axis
+
+    "wall.*"
     {
-        type            empty;
+        type            zeroGradient;
     }
-    wedgeFront
+
+    "symm.*"
     {
-        type            wedge;
-    }
-    wedgeBack
-    {
-        type            wedge;
+        type            symmetry;
     }
 }
 

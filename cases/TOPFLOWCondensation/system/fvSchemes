@@ -36,7 +36,7 @@ divSchemes
     "div\(alphaRhoPhi.*,(k|epsilon|omega).*\)"
                                     Gauss limitedLinear 1;
 
-    "div\(\(\(\((N|A|alpha).*\*thermo:rho.*\)\*nuEff.*\)\*dev2\(T\(grad\(U.*\)\)\)\)\)"
+    "div\(\(\(\(alpha.*\*thermo:rho.*\)\*nuEff.*\)\*dev2\(T\(grad\(U.*\)\)\)\)\)"
                                     Gauss linear;
 }
 

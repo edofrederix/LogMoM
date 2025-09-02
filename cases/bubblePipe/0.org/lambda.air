@@ -3,10 +3,10 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      A.air;
+    object      lambda.air;
 }
 
-dimensions      [0 -1 0 0 0 0 0];
+dimensions      [0 -3 0 0 0 0 0];
 
 internalField   uniform 0;
 
@@ -16,7 +16,9 @@ boundaryField
 
     inlet
     {
-        type            fixedValue;
+        type            inletOutletLogNormal;
+        sigma           0.5;
+        dsm             1e-3;
         value           $internalField;
     }
 

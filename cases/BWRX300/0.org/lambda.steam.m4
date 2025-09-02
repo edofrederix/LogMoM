@@ -3,19 +3,19 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      A.air;
+    object      lambda.steam;
 }
 
-dimensions      [0 -1 0 0 0 0 0];
+dimensions      [0 -3 0 0 0 0 0];
 
 internalField   uniform 0.0;
 
 boundaryField
 {
-    inlet
+    "inlet.*"
     {
         type            inletOutletLogNormal;
-        phi             phi.air;
+        phi             phi.steam;
         sigma           VARSIGMA;
         dsm             VARDSM;
         value           $internalField;
@@ -31,8 +31,16 @@ boundaryField
         type            zeroGradient;
     }
 
-    symm
+    "symm.*"
     {
         type            symmetry;
+    }
+}
+
+sources
+{
+    phaseChange
+    {
+        type            interfacialGrowthMoment;
     }
 }

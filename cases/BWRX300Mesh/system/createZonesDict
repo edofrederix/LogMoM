@@ -1,0 +1,20 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      createZonesDict;
+}
+
+x0
+{
+    type        box;
+    zoneType    face;
+    box         (-1e-5 -99 -99)(1e-5 99 99);
+}
+
+y0
+{
+    type        box;
+    zoneType    face;
+    box         (-99 -1e-5 -99)(99 1e-5 99);
+}

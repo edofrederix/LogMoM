@@ -3,7 +3,7 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      N.steam;
+    object      lambda.air;
 }
 
 dimensions      [0 -3 0 0 0 0 0];
@@ -15,7 +15,7 @@ boundaryField
     inlet
     {
         type            inletOutletLogNormal;
-        phi             phi.steam;
+        phi             phi.air;
         sigma           VARSIGMA;
         dsm             VARDSM;
         value           $internalField;
@@ -23,7 +23,7 @@ boundaryField
     outlet
     {
         type            inletOutletLogNormal;
-        phi             phi.steam;
+        phi             phi.air;
         sigma           VARSIGMA;
         dsm             VARDSM;
         value           $internalField;
@@ -43,13 +43,5 @@ boundaryField
     wedgeBack
     {
         type            wedge;
-    }
-}
-
-sources
-{
-    phaseChange
-    {
-        type            interfacialGrowthMoment;
     }
 }
