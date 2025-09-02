@@ -46,23 +46,19 @@ Foam::inletOutletLogNormalFvPatchScalarField::computeField() const
         q = pi/6.0;
     }
 
-    const scalarField& alpha =
-        patch().lookupPatchField<volScalarField,scalar>
-        (
-            IOobject::groupName
-            (
-                "alpha",
-                IOobject::group(this->internalField().name())
-            )
-        );
-
     return
-        alpha
-      * q*6.0/pi
-      * pow(dsm_, gamma-3.0)
-      * exp
+        tmp<scalarField>
         (
-            (0.5*sqr(gamma)-2.5*gamma+3.0)*sqr(sigma_)
+            new scalarField
+            (
+                patch().size(),
+                q*6.0/pi
+              * pow(dsm_, gamma-3.0)
+              * exp
+                (
+                    (0.5*sqr(gamma)-2.5*gamma+3.0)*sqr(sigma_)
+                )
+            )
         );
 }
 

@@ -128,11 +128,11 @@ Foam::diameterModels::LogMoMSources::LogMoMCoalescence::R
         dimensionedScalar(dimless/dimTime, 0)
     );
 
-    if (&moment == &logmom_.N())
+    if (&moment == &logmom_.lambda())
     {
         R = dM0dtByM0;
     }
-    else if (&moment == &logmom_.A())
+    else if (&moment == &logmom_.kappai())
     {
         R = (2.0*dM0dtByM0 - dM6dtByM6)/9.0;
     }
@@ -143,7 +143,7 @@ Foam::diameterModels::LogMoMSources::LogMoMCoalescence::R
             << abort(FatalError);
     }
 
-    return -fvm::SuSp(R, moment);
+    return -fvm::SuSp(R*alpha, moment);
 }
 
 

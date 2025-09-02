@@ -90,8 +90,8 @@ if [ "$MODE" == "logmom" ]; then
     cp system/sampleFields.LogMoM system/sampleFields
     cp system/functions.LogMoM system/functions
 
-    m4 -DVARSIGMA=$SIGMA -DVARDSM=$DSM 0/A.air.m4 > 0/A.air
-    m4 -DVARSIGMA=$SIGMA -DVARDSM=$DSM 0/N.air.m4 > 0/N.air
+    m4 -DVARSIGMA=$SIGMA -DVARDSM=$DSM 0/kappai.air.m4 > 0/kappai.air
+    m4 -DVARSIGMA=$SIGMA -DVARDSM=$DSM 0/lambda.air.m4 > 0/lambda.air
 
     cp constant/phaseProperties.LogMoM constant/phaseProperties
     cp constant/momentumTransfer.LogMoM constant/momentumTransfer

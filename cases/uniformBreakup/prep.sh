@@ -5,7 +5,7 @@ source $FOAM_SRC/../bin/tools/CleanFunctions
 
 # Parameters -------------------------------------------------------------------
 
-CASE=$1
+CASE=${1:-R0}
 
 if [[ ! "$CASE" =~ ^R[0-4]?$ ]]; then
 

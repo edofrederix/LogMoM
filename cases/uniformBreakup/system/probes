@@ -13,8 +13,8 @@ probes
 
     fields
     (
-        N.bubbles
-        A.bubbles
+        lambda.bubbles
+        kappai.bubbles
         alpha.bubbles
     );
 }

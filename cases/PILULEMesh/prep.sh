@@ -144,9 +144,9 @@ m4 $(vars) system/blockMeshDict.m4 > system/blockMeshDict
 runApplication -overwrite -suffix 1 blockMesh
 
 runApplication -overwrite -suffix 1 \
-    mirrorMesh -overwrite -dict system/mirrorMeshDict.y
+    mirrorMesh -dict system/mirrorMeshDict.y
 runApplication -overwrite -suffix 2 \
-    mirrorMesh -overwrite -dict system/mirrorMeshDict.x
+    mirrorMesh -dict system/mirrorMeshDict.x
 
 runApplication -overwrite -suffix 1 transformPoints Ry=180
 
@@ -166,9 +166,9 @@ m4 $(vars) system/blockMeshDict.m4 > system/blockMeshDict
 runApplication -overwrite -suffix 2 blockMesh
 
 runApplication -overwrite -suffix 1 \
-    mirrorMesh -overwrite -dict system/mirrorMeshDict.y
+    mirrorMesh -dict system/mirrorMeshDict.y
 runApplication -overwrite -suffix 2 \
-    mirrorMesh -overwrite -dict system/mirrorMeshDict.x
+    mirrorMesh -dict system/mirrorMeshDict.x
 
 sed -i 's/inlet/outlet/g' constant/polyMesh/boundary
 sed -i 's/defaultFaces/defaultFaces2/g' constant/polyMesh/boundary
@@ -176,10 +176,10 @@ sed -i 's/defaultFaces/defaultFaces2/g' constant/polyMesh/boundary
 # Merge
 
 runApplication -overwrite -suffix 1 \
-    mergeMeshes -overwrite -addCases '("inlet")'
+    mergeMeshes -addCases '("inlet")'
 
 runApplication -overwrite -suffix 1 \
-    stitchMesh -overwrite '((defaultFaces defaultFaces2))'
+    stitchMesh '((defaultFaces defaultFaces2))'
 
 # Pack
 
@@ -191,8 +191,8 @@ rm -r polyMesh
 
 # Create quarter symmetry mesh
 
-runApplication -overwrite -suffix 1 topoSet
-runApplication -overwrite -suffix 1 subsetMesh -overwrite extraction
+runApplication -overwrite -suffix 1 createZones
+runApplication -overwrite -suffix 1 subsetMesh -cellZone extraction
 sed -i 's/oldInternalFaces/symm/g' constant/polyMesh/boundary
 sed -i 's/internal/symmetry/g' constant/polyMesh/boundary
 
@@ -224,9 +224,9 @@ rm -r polyMesh
 # Create full mesh without obstacle
 
 runApplication -overwrite -suffix 3 \
-    mirrorMesh -overwrite -dict system/mirrorMeshDict.y
+    mirrorMesh -dict system/mirrorMeshDict.y
 runApplication -overwrite -suffix 4 \
-    mirrorMesh -overwrite -dict system/mirrorMeshDict.x
+    mirrorMesh -dict system/mirrorMeshDict.x
 
 # Pack
 

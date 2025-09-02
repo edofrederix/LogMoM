@@ -92,23 +92,18 @@ Foam::inletOutletLogNormalFvScalarFieldSource::sourceValue
     const scalar pi(constant::mathematical::pi);
     const scalar gamma(internalField().dimensions()[dimensionSet::LENGTH]+3);
 
-    const volScalarField& alpha =
-        source.mesh().lookupObject<volScalarField>
-        (
-            IOobject::groupName
-            (
-                "alpha",
-                IOobject::group(internalField().name())
-            )
-        );
-
     return
-        alpha.internalField()
-      * q()*6.0/pi
-      * pow(dsm_, gamma-3.0)
-      * exp
+        DimensionedField<scalar,volMesh>::New
         (
-            (0.5*sqr(gamma)-2.5*gamma+3.0)*sqr(sigma_)
+            model.name() + ":" + this->internalField().name() + "SourceValue",
+            this->internalField().mesh(),
+            dimensionedScalar
+            (
+                this->internalField().dimensions(),
+                q()*6.0/pi
+              * pow(dsm_, gamma-3.0)
+              * exp((0.5*sqr(gamma)-2.5*gamma+3.0)*sqr(sigma_))
+            )
         );
 }
 
@@ -124,30 +119,16 @@ Foam::inletOutletLogNormalFvScalarFieldSource::sourceValue
     const scalar pi(constant::mathematical::pi);
     const scalar gamma(internalField().dimensions()[dimensionSet::LENGTH]+3);
 
-    const volScalarField& alpha =
-        model.mesh().lookupObject<volScalarField>
-        (
-            IOobject::groupName
-            (
-                "alpha",
-                IOobject::group(internalField().name())
-            )
-        );
-
-    scalarField alphaSubset(cells.size());
-
-    forAll(cells, i)
-    {
-        alphaSubset[i] = alpha[cells[i]];
-    }
-
     return
-        alphaSubset
-      * q()*6.0/pi
-      * pow(dsm_, gamma-3.0)
-      * exp
+        tmp<scalarField>
         (
-            (0.5*sqr(gamma)-2.5*gamma+3.0)*sqr(sigma_)
+            new scalarField
+            (
+                cells.size(),
+                q()*6.0/pi
+              * pow(dsm_, gamma-3.0)
+              * exp((0.5*sqr(gamma)-2.5*gamma+3.0)*sqr(sigma_))
+            )
         );
 }
 

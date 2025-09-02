@@ -106,8 +106,8 @@ m4 -DVARTVAP=${TVAP[$C]} 0/T.steam.m4 > 0/T.steam
 m4 -DVARPRESSURE=${PRESSURES[$C]} 0/p.m4 > 0/p
 m4 -DVARPRESSURE=${PRESSURES[$C]} 0/p_rgh.m4 > 0/p_rgh
 
-m4 -DVARSIGMA=$SIGMA -DVARDSM=${DBUBS[$C]} 0/A.steam.m4 > 0/A.steam
-m4 -DVARSIGMA=$SIGMA -DVARDSM=${DBUBS[$C]} 0/N.steam.m4 > 0/N.steam
+m4 -DVARSIGMA=$SIGMA -DVARDSM=${DBUBS[$C]} 0/kappai.steam.m4 > 0/kappai.steam
+m4 -DVARSIGMA=$SIGMA -DVARDSM=${DBUBS[$C]} 0/lambda.steam.m4 > 0/lambda.steam
 
 m4 -DVARTR=${TR[$C]} constant/saturationTemperature.m4 > constant/saturationTemperature
 

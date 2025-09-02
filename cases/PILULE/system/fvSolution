@@ -38,7 +38,7 @@ solvers
         relTol          0;
     }
 
-    "(e|k|epsilon|omega|Theta|U|N|A|f).*"
+    "(e|k|epsilon|omega|Theta|U|f|kappai|lambda)\..*"
     {
         solver          smoothSolver;
         smoother        symGaussSeidel;

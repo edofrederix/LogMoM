@@ -9,12 +9,6 @@ FoamFile
 
 solvers
 {
-    "alpha.*"
-    {
-        nAlphaCorr      1;
-        nAlphaSubCycles 2;
-    }
-
     p_rgh
     {
         solver          GAMG;
@@ -29,43 +23,13 @@ solvers
         relTol          0;
     }
 
-    "(U|N|A).*"
+    U
     {
         solver          smoothSolver;
         smoother        symGaussSeidel;
         tolerance       1e-6;
         relTol          0;
         minIter         1;
-    }
-
-    "e.*"
-    {
-        solver          smoothSolver;
-        smoother        symGaussSeidel;
-        tolerance       1e-6;
-        relTol          0;
-    }
-
-    "(k|epsilon|omega|Theta).*"
-    {
-        solver          smoothSolver;
-        smoother        symGaussSeidel;
-        tolerance       0;
-        relTol          1e-5;
-        minIter         1;
-    }
-
-    yPsi
-    {
-        solver          PCG;
-        preconditioner  none;
-        tolerance       1e-10;
-        relTol          0;
-    }
-
-    yPsiFinal
-    {
-        $yPsi;
     }
 }
 
@@ -74,5 +38,4 @@ PIMPLE
     nOuterCorrectors    1;
     nCorrectors         2;
     nNonOrthogonalCorrectors 0;
-    faceMomentum        false;
 }

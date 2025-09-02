@@ -6,7 +6,7 @@ source $FOAM_SRC/../bin/tools/CleanFunctions
 # Parameters -------------------------------------------------------------------
 
 MODE=${1:-logmom}
-MESH=${2:-4}
+MESH=${2:-2}
 DT=${3:-10}
 DSM=${4:-0.002}
 HEATMODEL=${5-NuHZDR}
@@ -109,8 +109,8 @@ if [ "$MODE" == "logmom" ]; then
     cp system/sampleFields.LogMoM system/sampleFields
     cp system/functions.LogMoM system/functions
 
-    m4 $VARS 0/A.steam.m4 > 0/A.steam
-    m4 $VARS 0/N.steam.m4 > 0/N.steam
+    m4 $VARS 0/kappai.steam.m4 > 0/kappai.steam
+    m4 $VARS 0/lambda.steam.m4 > 0/lambda.steam
 
     cp constant/phaseProperties.LogMoM constant/phaseProperties
 

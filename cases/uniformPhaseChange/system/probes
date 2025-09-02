@@ -13,8 +13,8 @@ probes
 
     fields
     (
-        N.steam
-        A.steam
+        lambda.steam
+        kappai.steam
         alpha.steam
         p
         T.steam

@@ -86,12 +86,13 @@ model as a `diameterModel` for each phase, in the `constant/phaseProperties`
 file. Additional parameters, such as the coalescence and break-up models to use,
 must be provided as well. An example is given in
 `cases/TOPFLOW/constant/phaseProperties.LogMoM`. Finally, your case should
-provide initial and boundary conditions for the `N.<phase>` and `A.<phase>`
-fields, which are the zeroth and second diameter-based moments of the size
-distribution of phase `<phase>`. Finally, if a phase change model is enabled,
-the `N.<phase>` and `A.<phase>` fields must be equipped with the
-`interfacialGrowthMoment` source, for example, as is done in the
-`TOPFLOWCondensation` case. Refer to the cases in `cases/` for all examples.
+provide initial and boundary conditions for the `lambda.<phase>` and
+`kappai.<phase>` fields, which are the phase `<phase>` zeroth and second
+diameter-based size distribution moments scaled by the volume fraction. If a
+phase change model is enabled, the `lambda.<phase>` and `kappai.<phase>` fields
+must be equipped with the `interfacialGrowthMoment` source, for example, as is
+done in the `TOPFLOWCondensation` case. Refer to the cases in `cases/` for all
+examples.
 
 ## References
 

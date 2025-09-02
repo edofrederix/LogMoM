@@ -118,13 +118,13 @@ else:
 
 # Plot
 
-N = np.loadtxt('postProcessing/probes/0/N.bubbles')
-A = np.loadtxt('postProcessing/probes/0/A.bubbles')
+lamb = np.loadtxt('postProcessing/probes/0/lambda.bubbles')
+kappai = np.loadtxt('postProcessing/probes/0/kappai.bubbles')
 alpha = np.loadtxt('postProcessing/probes/0/alpha.bubbles')
 
-M0_tilde = N[:,1]*1e6/M0_0
-M2_tilde = A[:,1]/np.pi/(M0_0*M3_0**2)**(1.0/3.0)
-t_tilde = N[:,0]/TAU
+M0_tilde = lamb[:,1]*alpha[:,1]*1e6/M0_0
+M2_tilde = kappai[:,1]*alpha[:,1]/np.pi/(M0_0*M3_0**2)**(1.0/3.0)
+t_tilde = lamb[:,0]/TAU
 
 fig = plt.figure('M0')
 
