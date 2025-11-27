@@ -82,8 +82,6 @@ NBH=$(echo "$MATH; print(int(round($NB/2)))" | python)
 NC=$(echo "$MATH; print(int(round(($Z2-$R2)/$R1*$MESH)))" | python)
 NS=$(echo "$MATH; print(max(int(round($S/($R1-$FR1)*$NR1)),1))" | python)
 
-echo $NS
-
 Q=$(echo "$MATH; print(($Z32-$GL*$R1/$MESH)/($Z32-$R1/$MESH))" | python)
 NL=$(echo "$MATH; print(int(round(m.log(1.0/$GL)/m.log($Q)+1)))" | python)
 
