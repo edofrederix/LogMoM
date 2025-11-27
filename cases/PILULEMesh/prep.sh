@@ -5,7 +5,7 @@ source $FOAM_SRC/../bin/tools/CleanFunctions
 
 MESH=$1         # Number of cells per pipe radius
 
-D1=0.034        # Diameter of the fluid pipe minus twice the gap size
+D1=0.036        # Diameter of the fluid pipe minus twice the gap size
 D2=0.012        # Diameter of the cross pipe
 S=0.001         # Gap size
 F=0.5           # Ratio of the center block size and the pipe diameter
@@ -179,6 +179,10 @@ runApplication -overwrite -suffix 1 \
 runApplication -overwrite -suffix 1 \
     stitchMesh '((defaultFaces defaultFaces2))'
 
+# Zone
+
+runApplication -overwrite createZones
+
 # Pack
 
 echo "Packing"
@@ -187,53 +191,6 @@ tar czf mesh$MESH.tar.gz polyMesh
 
 rm -r polyMesh
 
-# Create quarter symmetry mesh
-
-runApplication -overwrite -suffix 1 createZones
-runApplication -overwrite -suffix 1 subsetMesh -cellZone extraction
-sed -i 's/oldInternalFaces/symm/g' constant/polyMesh/boundary
-sed -i 's/internal/symmetry/g' constant/polyMesh/boundary
-
-# Pack
-
-echo "Packing"
-cp -r constant/polyMesh .
-tar czf mesh${MESH}S.tar.gz polyMesh
-
-rm -r polyMesh
-
-# Create mesh without obstacle
-
-m4 $(vars) system/blockMeshDictNoObstacle.m4 > system/blockMeshDict
-
-runApplication -overwrite -suffix 3 blockMesh
-
-sed -i 's/defaultFaces/symm/g' constant/polyMesh/boundary
-sed -i 's/empty/symmetry/g' constant/polyMesh/boundary
-
-# Pack
-
-echo "Packing"
-cp -r constant/polyMesh .
-tar czf mesh${MESH}SN.tar.gz polyMesh
-
-rm -r polyMesh
-
-# Create full mesh without obstacle
-
-runApplication -overwrite -suffix 3 \
-    mirrorMesh -dict system/mirrorMeshDict.y
-runApplication -overwrite -suffix 4 \
-    mirrorMesh -dict system/mirrorMeshDict.x
-
-# Pack
-
-echo "Packing"
-cp -r constant/polyMesh .
-tar czf mesh${MESH}N.tar.gz polyMesh
-
-rm -r polyMesh
-
-##
+cp -r 0.orig 0
 
 echo Done

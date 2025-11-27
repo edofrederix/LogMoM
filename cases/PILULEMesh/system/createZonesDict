@@ -5,9 +5,12 @@ FoamFile
     object      createZonesDict;
 }
 
-extraction
+cylinder
 {
-    type        box;
+    type        cylinder;
     zoneType    cell;
-    box         (0 0 -99) (99 99 99);
+
+    point1      (0 -1 0);
+    point2      (0 1 0);
+    radius      0.006;
 }

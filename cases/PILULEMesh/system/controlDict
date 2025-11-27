@@ -9,7 +9,7 @@ FoamFile
 
 application     foamRun;
 
-solver          multiphaseEuler;
+solver          incompressibleFluid;
 
 startFrom       latestTime;
 
@@ -17,7 +17,7 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         40;
+endTime         10;
 
 deltaT          1e-5;
 
@@ -41,6 +41,21 @@ runTimeModifiable yes;
 
 adjustTimeStep  yes;
 
-maxCo           0.4;
+maxCo           10;
 
 maxDeltaT       1;
+
+libs
+(
+    "libfieldFunctionObjects.so"
+);
+
+functions
+{
+    CFL
+    {
+        type            CourantNo;
+        writeControl    writeTime;
+        log             on;
+    }
+}
