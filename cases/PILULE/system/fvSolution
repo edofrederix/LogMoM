@@ -26,10 +26,10 @@ solvers
 
     p_rgh
     {
-        solver          GAMG;
-        smoother        DIC;
-        relTol          1e-3;
-        tolerance       1e-6;
+        solver          PCG;
+        tolerance       1e-05;
+        relTol          0.01;
+        preconditioner  DIC;
     }
 
     p_rghFinal
@@ -72,4 +72,12 @@ PIMPLE
     nCorrectors         3;
     nNonOrthogonalCorrectors 0;
     faceMomentum        false;
+}
+
+relaxationFactors
+{
+    equations
+    {
+        ".*"            0.8;
+    }
 }
