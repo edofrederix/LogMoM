@@ -174,9 +174,30 @@ Foam::diameterModels::LogMoM::LogMoM
     gamma_(3),
     fields_()
 {
-    // Correct the LogMoM model. Do not limit the moments yet during
-    // construction because the boundary update in the limit procedure may
-    // require fields that do not yet exist.
+    // Correct the LogMoM model. Do not limit the moments yet with the
+    // limitMoments() functions because the boundary update in the limit
+    // procedure may require fields that do not yet exist. So we limit manually.
+
+    const scalar pi(constant::mathematical::pi);
+
+    const dimensionedScalar kappaiMin(6.0/dMax_);
+    const dimensionedScalar kappaiMax(6.0/dMin_);
+
+    kappai_ = min(max(kappai_, kappaiMin), kappaiMax);
+
+    const volScalarField lambdaMin
+    (
+        pow(kappai_,3.0)/(36.0*pi*1e6)
+      * exp(3.0*sqr(sigmaMin_))
+    );
+
+    const volScalarField lambdaMax
+    (
+        pow(kappai_,3.0)/(36.0*pi*1e6)
+      * exp(3.0*sqr(sigmaMax_))
+    );
+
+    lambda_ = min(max(lambda_, lambdaMin), lambdaMax);
 
     correctDistribution();
     d_ = d(3,2);

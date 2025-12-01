@@ -47,7 +47,7 @@ Foam::tmp<Foam::volScalarField> Foam::breakupModels::noBreak::binaryRate
         (
             "tR",
             logmom_.phase().mesh(),
-            dimensionedScalar(inv(dimTime), Zero)
+            dimensionedScalar(inv(dimTime*dimVolume), Zero)
         )
     );
 
