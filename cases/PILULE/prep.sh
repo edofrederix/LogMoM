@@ -11,6 +11,8 @@ FSI=${4:-false}
 TURBMODELAIR=${5:-kOmegaSST}
 TURBMODELWATER=${6:-kOmegaSSTSato}
 
+IC=${7:-true}
+
 SIGMA=0.5
 DSM=2e-3
 NSECTIONS=16
@@ -26,6 +28,8 @@ if [ -f "mesh$MESH.tar.gz" ]; then
     tar xzf mesh$MESH.tar.gz -C constant
 elif [ -f "../PILULEMesh/mesh$MESH.tar.gz" ]; then
     tar xzf ../PILULEMesh/mesh$MESH.tar.gz -C constant
+elif [ -f "$HOME/git/LogMoM-3/cases/PILULEMesh/mesh$MESH.tar.gz" ]; then
+    tar xzf $HOME/git/LogMoM-3/cases/PILULEMesh/mesh$MESH.tar.gz -C constant
 else
     echo "Mesh file mesh$MESH.tar.gz not found."
     echo "Generate package with PILULEMesh case."
@@ -48,6 +52,12 @@ fi
 if [[ ! "$FSI" =~ ^(true|false)$ ]]; then
 
     echo "Invalid FSI mode (should be true or false)"
+    exit
+fi
+
+if [[ ! "$IC" =~ ^(true|false)$ ]]; then
+
+    echo "Invalid IC mode (should be true or false)"
     exit
 fi
 
@@ -75,14 +85,14 @@ if [ "$MODE" == "logmom" ]; then
 
     cp system/sampleFields.LogMoM system/sampleFields
     cp system/averagingFields.LogMoM system/averagingFields
-    cp constant/phaseProperties.LogMoM constant/phaseProperties
+    cp constant/phaseProperties.LogMoM constant/phaseProperties.m4
     cp constant/momentumTransfer.LogMoM constant/momentumTransfer
 
 else
 
     cp system/sampleFields.FPT system/sampleFields
     cp system/averagingFields.FPT system/averagingFields
-    cp constant/phaseProperties.FPT constant/phaseProperties
+    cp constant/phaseProperties.FPT constant/phaseProperties.m4
     cp constant/momentumTransfer.FPT constant/momentumTransfer
 
     python3 sizeGroups.py $DSM $SIGMA $NSECTIONS
@@ -119,6 +129,16 @@ else
 
 fi
 
+if [ "$IC" == "true" ]; then
+
+    ICVALUE=1
+
+else
+
+    ICVALUE=0
+
+fi
+
 rm 0/f.m4
 
 VARS="\
@@ -132,6 +152,7 @@ VARS="\
     -DVARTURBMODELWATER=$TURBMODELWATER \
     -DVARUAIRCYLINDERBC=$UAIRCYLINDERBC \
     -DVARUWATERCYLINDERBC=$UWATERCYLINDERBC \
+    -DVARICVALUE=$ICVALUE \
     "
 
 find -name *.m4 | while read IN; do

@@ -27,9 +27,9 @@ solvers
     p_rgh
     {
         solver          PCG;
-        tolerance       1e-05;
-        relTol          0.01;
         preconditioner  DIC;
+        tolerance       1e-6;
+        relTol          1e-3;
     }
 
     p_rghFinal
@@ -43,15 +43,13 @@ solvers
         solver          smoothSolver;
         smoother        symGaussSeidel;
         tolerance       1e-6;
-        relTol          0;
+        relTol          1e-3;
         minIter         1;
     }
 
     yPsi
     {
-        solver          PCG;
-        preconditioner  none;
-        tolerance       1e-10;
+        $p_rgh;
         relTol          0;
     }
 
@@ -62,7 +60,7 @@ solvers
 
     "pcorr.*"
     {
-        $p_rghFinal;
+        $p_rgh;
     }
 }
 
@@ -71,13 +69,5 @@ PIMPLE
     nOuterCorrectors    1;
     nCorrectors         3;
     nNonOrthogonalCorrectors 0;
-    faceMomentum        false;
-}
-
-relaxationFactors
-{
-    equations
-    {
-        ".*"            0.8;
-    }
+    faceMomentum        true;
 }

@@ -106,7 +106,7 @@ surfaceTension
 
 interfaceCompression
 {
-    air_water   1;
+    air_water   VARICVALUE;
 }
 
 aspectRatio

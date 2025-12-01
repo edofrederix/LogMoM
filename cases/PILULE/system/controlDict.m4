@@ -41,7 +41,7 @@ runTimeModifiable yes;
 
 adjustTimeStep  yes;
 
-maxCo           2.0;
+maxCo           0.4;
 
 maxDeltaT       1;
 
@@ -136,6 +136,20 @@ functions
             alphaRhoPhi.air
             alphaPhi.water
             alphaRhoPhi.water
+        );
+    }
+
+    void
+    {
+        type            surfaceFieldValue;
+        writeFields     false;
+        select          patch;
+        patch           wall_cylinder;
+        operation       areaAverage;
+        fields
+        (
+            alpha.air
+            alpha.water
         );
     }
 

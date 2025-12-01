@@ -15,16 +15,16 @@ limitp
 
 limitUWater
 {
-    type    limitMag;
-    max     4.0;
-    select  all;
-    field   U.water;
+    type        limitMag;
+    max         4.0;
+    cellZone    all;
+    field       U.water;
 }
 
 limitUAir
 {
-    type    limitMag;
-    max     4.0;
-    select  all;
-    field   U.air;
+    type        limitMag;
+    max         4.0;
+    cellZone    all;
+    field       U.air;
 }
