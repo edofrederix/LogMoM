@@ -90,10 +90,10 @@ mover
             refAttachmentPt (0.0 0.0 0.0);
 
             // Stiffness
-            stiffness       399.5;
+            stiffness       406;
 
             // Damping coefficient
-            damping         0.00492;
+            damping         0.0501;
 
             // Rest length (spring is at rest when the cylinder is at the anchor
             // point)

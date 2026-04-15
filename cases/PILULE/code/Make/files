@@ -1,0 +1,5 @@
+weightedMappedInternalValue/weightedMappedInternalValueFvPatchFields.C
+inletVelocityMappedInternalValue/inletVelocityMappedInternalValueFvPatchVectorField.C
+oscillatingDisk/oscillatingDiskFvPatchScalarField.C
+
+LIB = libcode

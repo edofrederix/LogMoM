@@ -17,7 +17,7 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         20;
+endTime         30;
 
 deltaT          1e-5;
 
@@ -41,7 +41,7 @@ runTimeModifiable yes;
 
 adjustTimeStep  yes;
 
-maxCo           0.4;
+maxCo           0.9;
 
 maxDeltaT       1;
 
@@ -50,6 +50,7 @@ libs
     "libLogMoM.so"
     "libfieldFunctionObjects.so"
     "libmultiphaseSixDoFRigidBodyMotion.so"
+    "./code/libcode.so"
 );
 
 functions

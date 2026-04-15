@@ -11,9 +11,9 @@ S=0.001         # Gap size
 F=0.5           # Ratio of the center block size and the pipe diameter
 H=0.4           # Ratio of the center block vertex and the pipe diameter
 THETA0=45       # Angle of the corner points at the zero plane
-LI=0.5          # Inlet length
-LO=0.25         # Outlet length
-GL=5            # Inlet grading
+LI=1.0          # Inlet length
+LO=0.5          # Outlet length
+GL=3.0          # Inlet grading
 
 ##
 
@@ -153,7 +153,7 @@ cp -r system constant inlet
 
 # Create outlet mesh
 
-GL=$(echo "print($GL*$LO/$LI)" | python)
+GL=$(echo "print($GL**($LO/$LI))" | python)
 Z3=$LO
 Z32=$(echo "print($Z3-$Z2)" | python)
 Q=$(echo "$MATH; print(($Z32-$GL*$R1/$MESH)/($Z32-$R1/$MESH))" | python)

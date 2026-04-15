@@ -19,8 +19,8 @@ alphaMean.air
 alphaMean.water
 dMean.air
 sigmaMean.air
-NMean.air
-AMean.air
+lambdaMean.air
+kappaiMean.air
 kMean.air
 kMean.water
 nutMean.air

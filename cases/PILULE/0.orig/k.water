@@ -14,7 +14,8 @@ boundaryField
 {
     inlet
     {
-        type            fixedValue;
+        type            mappedInternalValue;
+        interpolationScheme cell;
         value           $internalField;
     }
 

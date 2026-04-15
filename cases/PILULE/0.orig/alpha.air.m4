@@ -13,8 +13,11 @@ boundaryField
 {
     inlet
     {
-        type            fixedValue;
-        value           $internalField;
+        type            oscillatingDisk;
+        lambda          0.0095;
+        kappa           0.04;
+        average         VARALPHAG;
+        amplitude       -VARAMPLITUDE;
     }
 
     outlet

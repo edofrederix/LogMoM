@@ -72,11 +72,13 @@ ALPHAL=$(echo "print(1.0-$ALPHAG)" | python)
 if [ ! "$CASE" == "0" ]; then
     UG=$(echo "print($JG/$ALPHAG)" | python)
     UL=$(echo "print($JL/$ALPHAL)" | python)
+    AMPLITUDE=$(echo "print(min($ALPHAG,$ALPHAL)-1e-5)" | python)
 else
     UG=$JL
     UL=$JL
     ALPHAG=1e-5
     ALPHAL=0.99999
+    AMPLITUDE=0.0
 fi
 
 cp -r 0.orig 0
@@ -146,6 +148,7 @@ VARS="\
     -DVARDSM=$DSM \
     -DVARALPHAG=$ALPHAG \
     -DVARALPHAL=$ALPHAL \
+    -DVARAMPLITUDE=$AMPLITUDE \
     -DVARUG=$UG \
     -DVARUL=$UL \
     -DVARTURBMODELAIR=$TURBMODELAIR \
@@ -193,5 +196,12 @@ if [ "$MODE" == "logmom" ]; then
     runApplication setLogNormal air $SIGMA $DSM
 
 fi
+
+runApplication foamDictionary -entry entry0/inlet/type -set mappedInternal constant/polyMesh/boundary
+runApplication -append foamDictionary -entry entry0/inlet/inGroups -set "List<word> 1(mappedInternal)" constant/polyMesh/boundary
+runApplication -append foamDictionary -entry entry0/inlet/offsetMode -set direction constant/polyMesh/boundary
+runApplication -append foamDictionary -entry entry0/inlet/offset -set "(0 0 0.8)" constant/polyMesh/boundary
+
+wmake -a -s code
 
 runApplication decomposePar

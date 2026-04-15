@@ -16,7 +16,7 @@ limitp
 limitUWater
 {
     type        limitMag;
-    max         4.0;
+    max         5.0;
     cellZone    all;
     field       U.water;
 }
@@ -24,7 +24,7 @@ limitUWater
 limitUAir
 {
     type        limitMag;
-    max         4.0;
+    max         5.0;
     cellZone    all;
     field       U.air;
 }
