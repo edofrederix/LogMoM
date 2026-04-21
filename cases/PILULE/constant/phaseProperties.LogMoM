@@ -26,9 +26,15 @@ air
         (
             coalescence
             {
-                type            LehrMilliesMewes;
+
+                type            PrinceBlanch;
                 GaussHermite    3;
-                uCrit           0.01;
+
+                C1              0.01;
+
+                turbulence      true;
+                buoyancy        false;
+                laminarShear    false;
             }
 
             breakup

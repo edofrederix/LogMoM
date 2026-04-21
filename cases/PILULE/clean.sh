@@ -13,6 +13,7 @@ rm -rf \
     system/sampleFields \
     system/averagingFields \
     constant/phaseProperties \
+    constant/phaseProperties.m4 \
     constant/momentumTransfer \
     constant/FPT \
     system/sixDoFRigidBodyState \
