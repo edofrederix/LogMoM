@@ -59,12 +59,21 @@ Foam::tmp<Foam::volScalarField> Foam::liftModels::LogMoMLiftModel::Cl() const
 
 Foam::tmp<Foam::volVectorField> Foam::liftModels::LogMoMLiftModel::Fi() const
 {
-    return
+    tmp<volVectorField> tFi =
         this->evaluate(gamma(), &LogMoMLiftModel::Cl, *this)
       * interface_.continuous().rho()
       * (
             interface_.Ur() ^ fvc::curl(interface_.continuous().U())
         );
+
+    if (wallDampingModelPtr_.valid())
+    {
+        return wallDampingModelPtr_->damping()*tFi;
+    }
+    else
+    {
+        return tFi;
+    }
 }
 
 // ************************************************************************* //

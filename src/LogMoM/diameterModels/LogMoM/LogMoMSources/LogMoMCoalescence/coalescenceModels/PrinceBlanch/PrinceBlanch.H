@@ -36,7 +36,7 @@ class PrinceBlanch
         //- Switch for considering buoyancy-induced collisions
         Switch buoyancy_;
 
-        //- Switch for considering buoyancy-induced collisions
+        //- Switch for considering shear-induced collisions
         Switch laminarShear_;
 
 
