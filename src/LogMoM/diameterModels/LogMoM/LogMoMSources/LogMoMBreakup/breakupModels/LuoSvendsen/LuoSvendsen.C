@@ -52,7 +52,7 @@ Foam::breakupModels::LuoSvendsen::LuoSvendsen
             "gamma5by11",
             Function1s::tableBase::boundsHandling::clamp,
             linearInterpolationWeights::typeName,
-            autoPtr<TableReader<scalar>>(nullptr),
+            autoPtr<TableReader<scalar, scalar>>(nullptr),
             gammaUpperReg5by11Table
         );
 }

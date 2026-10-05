@@ -78,7 +78,7 @@ public:
         virtual void correct();
 
         //- Return the mass transfer rate
-        virtual tmp<DimensionedField<scalar, volMesh>> mDot() const;
+        virtual tmp<DimensionedField<scalar, fvMesh>> mDot() const;
 };
 
 

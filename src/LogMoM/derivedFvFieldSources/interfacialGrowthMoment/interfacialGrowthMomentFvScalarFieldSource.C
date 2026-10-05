@@ -31,7 +31,7 @@ Foam::scalar Foam::interfacialGrowthMomentFvScalarFieldSource::gamma() const
 Foam::interfacialGrowthMomentFvScalarFieldSource::
 interfacialGrowthMomentFvScalarFieldSource
 (
-    const DimensionedField<scalar, volMesh>& iF,
+    const DimensionedField<scalar, fvMesh>& iF,
     const dictionary& dict
 )
 :
@@ -43,7 +43,7 @@ Foam::interfacialGrowthMomentFvScalarFieldSource::
 interfacialGrowthMomentFvScalarFieldSource
 (
     const interfacialGrowthMomentFvScalarFieldSource& field,
-    const DimensionedField<scalar, volMesh>& iF
+    const DimensionedField<scalar, fvMesh>& iF
 )
 :
     fvScalarFieldSource(field, iF)
@@ -59,23 +59,23 @@ Foam::interfacialGrowthMomentFvScalarFieldSource::
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::volMesh>>
+Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::fvMesh>>
 Foam::interfacialGrowthMomentFvScalarFieldSource::sourceValue
 (
     const fvSource& model,
-    const DimensionedField<scalar, volMesh>& source
+    const DimensionedField<scalar, fvMesh>& source
 ) const
 {
     NotImplemented;
-    return tmp<DimensionedField<scalar, volMesh>>(nullptr);
+    return tmp<DimensionedField<scalar, fvMesh>>(nullptr);
 }
 
 
-Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::volMesh>>
+Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::fvMesh>>
 Foam::interfacialGrowthMomentFvScalarFieldSource::internalCoeff
 (
     const fvSource& model,
-    const DimensionedField<scalar, volMesh>& source
+    const DimensionedField<scalar, fvMesh>& source
 ) const
 {
     // When the source is negative, we have shrinkage. In that case, all moment
@@ -86,11 +86,11 @@ Foam::interfacialGrowthMomentFvScalarFieldSource::internalCoeff
 }
 
 
-Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::volMesh>>
+Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::fvMesh>>
 Foam::interfacialGrowthMomentFvScalarFieldSource::sourceCoeff
 (
     const fvSource& model,
-    const DimensionedField<scalar, volMesh>& source
+    const DimensionedField<scalar, fvMesh>& source
 ) const
 {
     const scalar gamma = this->gamma();
@@ -112,7 +112,7 @@ Foam::interfacialGrowthMomentFvScalarFieldSource::sourceCoeff
         FatalErrorInFunction
             << "Invalid moment order" << endl << abort(FatalError);
 
-        return tmp<DimensionedField<scalar, volMesh>>(nullptr);
+        return tmp<DimensionedField<scalar, fvMesh>>(nullptr);
     }
 }
 

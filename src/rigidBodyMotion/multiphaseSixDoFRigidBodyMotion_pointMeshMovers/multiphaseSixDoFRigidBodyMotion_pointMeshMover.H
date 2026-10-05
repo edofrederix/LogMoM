@@ -1,35 +1,26 @@
-#ifndef multiphaseSixDoFRigidBodyMotionSolver_H
-#define multiphaseSixDoFRigidBodyMotionSolver_H
+#ifndef multiphaseSixDoFRigidBodyMotion_pointMeshMover_H
+#define multiphaseSixDoFRigidBodyMotion_pointMeshMover_H
 
-#include "displacementMotionSolver.H"
+#include "multiRigidBody_pointMeshMover.H"
 #include "sixDoFRigidBodyMotion.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+namespace pointMeshMovers
+{
 
 /*---------------------------------------------------------------------------*\
-            Class multiphaseSixDoFRigidBodyMotionSolver Declaration
+             Class multiphaseSixDoFRigidBodyMotion Declaration
 \*---------------------------------------------------------------------------*/
 
-class multiphaseSixDoFRigidBodyMotionSolver
+class multiphaseSixDoFRigidBodyMotion
 :
-    public displacementMotionSolver,
-    public sixDoFRigidBodyMotion
+    public pointMeshMovers::multiRigidBody,
+    public Foam::sixDoFRigidBodyMotion
 {
     // Private Data
-
-        wordReList patches_;
-
-        //- Patches to integrate forces
-        const labelHashSet patchSet_;
-
-        //- Inner morphing distance (limit of solid-body region)
-        const scalar di_;
-
-        //- Outer morphing distance (limit of linear interpolation region)
-        const scalar do_;
 
         //- Switch for test-mode in which only the
         //  gravitational body-force is applied
@@ -41,11 +32,17 @@ class multiphaseSixDoFRigidBodyMotionSolver
         //- Optional acceleration due to gravity
         dimensionedVector g_;
 
-        //- Current interpolation scale (1 at patches, 0 at distance_)
-        pointScalarField scale_;
-
         //- Current time index (used for updating)
         label curTimeIndex_;
+
+
+    // Private Member Functions
+
+        //- Return the list of transformation for each body from time 0
+        virtual List<septernion> transforms0() const;
+
+        //- Move the bodies
+        virtual void moveBodies();
 
 
 public:
@@ -57,34 +54,24 @@ public:
     // Constructors
 
         //- Construct from polyMesh and dictionary
-        multiphaseSixDoFRigidBodyMotionSolver
+        multiphaseSixDoFRigidBodyMotion
         (
-            const word& name,
             const polyMesh&,
             const dictionary& dict
         );
 
         //- Disallow default bitwise copy construction
-        multiphaseSixDoFRigidBodyMotionSolver
+        multiphaseSixDoFRigidBodyMotion
         (
-            const multiphaseSixDoFRigidBodyMotionSolver&
+            const multiphaseSixDoFRigidBodyMotion&
         ) = delete;
 
 
     //- Destructor
-    ~multiphaseSixDoFRigidBodyMotionSolver();
+    ~multiphaseSixDoFRigidBodyMotion();
 
 
     // Member Functions
-
-        //- Return the six DoF motion object
-        const sixDoFRigidBodyMotion& motion() const;
-
-        //- Return point location obtained from the current motion field
-        virtual tmp<pointField> curPoints() const;
-
-        //- Solve for motion
-        virtual void solve();
 
         //- Write motion state information for restart
         virtual bool write() const;
@@ -93,12 +80,13 @@ public:
     // Member Operators
 
         //- Disallow default bitwise assignment
-        void operator=(const multiphaseSixDoFRigidBodyMotionSolver&) = delete;
+        void operator=(const multiphaseSixDoFRigidBodyMotion&) = delete;
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace pointMeshMovers
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

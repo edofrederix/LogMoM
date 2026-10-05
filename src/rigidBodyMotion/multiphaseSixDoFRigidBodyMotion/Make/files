@@ -1,3 +1,0 @@
-multiphaseSixDoFRigidBodyMotionSolver/multiphaseSixDoFRigidBodyMotionSolver.C
-
-LIB = $(FOAM_USER_LIBBIN)/libmultiphaseSixDoFRigidBodyMotion

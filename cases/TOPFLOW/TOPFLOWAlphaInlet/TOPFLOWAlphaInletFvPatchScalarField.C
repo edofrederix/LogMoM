@@ -11,7 +11,7 @@ Foam::TOPFLOWAlphaInletFvPatchScalarField::
 TOPFLOWAlphaInletFvPatchScalarField
 (
     const fvPatch& p,
-    const DimensionedField<scalar, volMesh>& iF
+    const DimensionedField<scalar, fvMesh>& iF
 )
 :
     fixedValueFvPatchScalarField(p, iF),
@@ -25,7 +25,7 @@ Foam::TOPFLOWAlphaInletFvPatchScalarField::
 TOPFLOWAlphaInletFvPatchScalarField
 (
     const fvPatch& p,
-    const DimensionedField<scalar, volMesh>& iF,
+    const DimensionedField<scalar, fvMesh>& iF,
     const dictionary& dict
 )
 :
@@ -60,7 +60,7 @@ TOPFLOWAlphaInletFvPatchScalarField
 (
     const TOPFLOWAlphaInletFvPatchScalarField& ptf,
     const fvPatch& p,
-    const DimensionedField<scalar, volMesh>& iF,
+    const DimensionedField<scalar, fvMesh>& iF,
     const fvPatchFieldMapper& mapper
 )
 :
@@ -76,7 +76,7 @@ Foam::TOPFLOWAlphaInletFvPatchScalarField::
 TOPFLOWAlphaInletFvPatchScalarField
 (
     const TOPFLOWAlphaInletFvPatchScalarField& ptf,
-    const DimensionedField<scalar, volMesh>& iF
+    const DimensionedField<scalar, fvMesh>& iF
 )
 :
     fixedValueFvPatchScalarField(ptf, iF),

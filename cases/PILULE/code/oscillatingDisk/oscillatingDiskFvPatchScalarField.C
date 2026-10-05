@@ -10,7 +10,7 @@ Foam::oscillatingDiskFvPatchScalarField::
 oscillatingDiskFvPatchScalarField
 (
     const fvPatch& p,
-    const DimensionedField<scalar, volMesh>& iF,
+    const DimensionedField<scalar, fvMesh>& iF,
     const dictionary& dict
 )
 :
@@ -29,7 +29,7 @@ oscillatingDiskFvPatchScalarField
 (
     const oscillatingDiskFvPatchScalarField& ptf,
     const fvPatch& p,
-    const DimensionedField<scalar, volMesh>& iF,
+    const DimensionedField<scalar, fvMesh>& iF,
     const fieldMapper& mapper
 )
 :
@@ -49,7 +49,7 @@ Foam::oscillatingDiskFvPatchScalarField::
 oscillatingDiskFvPatchScalarField
 (
     const oscillatingDiskFvPatchScalarField& ptf,
-    const DimensionedField<scalar, volMesh>& iF
+    const DimensionedField<scalar, fvMesh>& iF
 )
 :
     fixedValueFvPatchScalarField(ptf, iF),

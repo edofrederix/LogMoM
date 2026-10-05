@@ -36,7 +36,6 @@ Foam::virtualMassModels::LogMoMVirtualMassModel::LogMoMVirtualMassModel
         (
             dict.subDict("virtualMass"),
             interface,
-            false,
             registerObject
         )
     )

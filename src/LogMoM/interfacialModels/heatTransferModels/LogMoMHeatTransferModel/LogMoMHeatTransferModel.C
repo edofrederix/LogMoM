@@ -52,7 +52,7 @@ LogMoMHeatTransferModel
         (
             dict.subDict("heatTransfer"),
             interface,
-            false
+            registerObject
         ).ptr()
     ),
     pow_(dict.lookupOrDefault<scalar>("power", 0.5))

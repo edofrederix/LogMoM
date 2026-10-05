@@ -1,7 +1,7 @@
 #include "inletVelocityMappedInternalValueFvPatchVectorField.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "interpolationCell.H"
+#include "cell_interpolation.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -10,7 +10,7 @@ Foam::inletVelocityMappedInternalValueFvPatchVectorField::
 inletVelocityMappedInternalValueFvPatchVectorField
 (
     const fvPatch& p,
-    const DimensionedField<vector, volMesh>& iF,
+    const DimensionedField<vector, fvMesh>& iF,
     const dictionary& dict
 )
 :
@@ -22,7 +22,7 @@ inletVelocityMappedInternalValueFvPatchVectorField
 (
     const inletVelocityMappedInternalValueFvPatchVectorField& ptf,
     const fvPatch& p,
-    const DimensionedField<vector, volMesh>& iF,
+    const DimensionedField<vector, fvMesh>& iF,
     const fieldMapper& mapper
 )
 :
@@ -33,7 +33,7 @@ Foam::inletVelocityMappedInternalValueFvPatchVectorField::
 inletVelocityMappedInternalValueFvPatchVectorField
 (
     const inletVelocityMappedInternalValueFvPatchVectorField& ptf,
-    const DimensionedField<vector, volMesh>& iF
+    const DimensionedField<vector, fvMesh>& iF
 )
 :
     mappedInternalValueFvPatchField<vector>(ptf, iF)
@@ -64,7 +64,7 @@ void Foam::inletVelocityMappedInternalValueFvPatchVectorField::updateCoeffs()
     // Construct mapped values
     Field<vector> sampleValues;
 
-    if (this->interpolationScheme_ != interpolationCell<vector>::typeName)
+    if (this->interpolationScheme_ != interpolations::cell<vector>::typeName)
     {
         // Create an interpolation
         autoPtr<interpolation<vector>> interpolatorPtr

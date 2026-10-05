@@ -3,6 +3,7 @@
 #include "massDiffusionLimitedPhaseChange.H"
 #include "homogeneousCondensation.H"
 #include "homogeneousLiquidPhaseSeparation.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

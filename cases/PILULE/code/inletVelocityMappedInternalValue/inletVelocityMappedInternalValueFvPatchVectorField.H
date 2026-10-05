@@ -28,7 +28,7 @@ public:
         inletVelocityMappedInternalValueFvPatchVectorField
         (
             const fvPatch&,
-            const DimensionedField<vector, volMesh>&,
+            const DimensionedField<vector, fvMesh>&,
             const dictionary&
         );
 
@@ -38,7 +38,7 @@ public:
         (
             const inletVelocityMappedInternalValueFvPatchVectorField&,
             const fvPatch&,
-            const DimensionedField<vector, volMesh>&,
+            const DimensionedField<vector, fvMesh>&,
             const fieldMapper&
         );
 
@@ -52,13 +52,13 @@ public:
         inletVelocityMappedInternalValueFvPatchVectorField
         (
             const inletVelocityMappedInternalValueFvPatchVectorField&,
-            const DimensionedField<vector, volMesh>&
+            const DimensionedField<vector, fvMesh>&
         );
 
         //- Construct and return a clone setting internal field reference
         virtual tmp<fvPatchField<vector>> clone
         (
-            const DimensionedField<vector, volMesh>& iF
+            const DimensionedField<vector, fvMesh>& iF
         ) const
         {
             return tmp<fvPatchField<vector>>

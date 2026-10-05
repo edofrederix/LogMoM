@@ -49,7 +49,7 @@ libs
 (
     "libLogMoM.so"
     "libfieldFunctionObjects.so"
-    "libmultiphaseSixDoFRigidBodyMotion.so"
+    "libmultiphaseSixDoFRigidBodyMotion_pointMeshMovers.so"
     "./code/libcode.so"
 );
 

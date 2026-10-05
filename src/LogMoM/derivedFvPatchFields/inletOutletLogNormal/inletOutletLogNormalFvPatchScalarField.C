@@ -69,7 +69,7 @@ Foam::inletOutletLogNormalFvPatchScalarField::
 inletOutletLogNormalFvPatchScalarField
 (
     const fvPatch& p,
-    const DimensionedField<scalar, volMesh>& iF
+    const DimensionedField<scalar, fvMesh>& iF
 )
 :
     inletOutletFvPatchScalarField(p, iF),
@@ -87,7 +87,7 @@ inletOutletLogNormalFvPatchScalarField
 (
     const inletOutletLogNormalFvPatchScalarField& ptf,
     const fvPatch& p,
-    const DimensionedField<scalar, volMesh>& iF,
+    const DimensionedField<scalar, fvMesh>& iF,
     const fvPatchFieldMapper& mapper
 )
 :
@@ -101,7 +101,7 @@ Foam::inletOutletLogNormalFvPatchScalarField::
 inletOutletLogNormalFvPatchScalarField
 (
     const fvPatch& p,
-    const DimensionedField<scalar, volMesh>& iF,
+    const DimensionedField<scalar, fvMesh>& iF,
     const dictionary& dict
 )
 :
@@ -135,7 +135,7 @@ Foam::inletOutletLogNormalFvPatchScalarField::
 inletOutletLogNormalFvPatchScalarField
 (
     const inletOutletLogNormalFvPatchScalarField& tppsf,
-    const DimensionedField<scalar, volMesh>& iF
+    const DimensionedField<scalar, fvMesh>& iF
 )
 :
     inletOutletFvPatchScalarField(tppsf, iF),

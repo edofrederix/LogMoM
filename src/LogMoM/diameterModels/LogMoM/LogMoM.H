@@ -31,6 +31,9 @@ class LogMoM
         //- The Sauter-mean diameter
         volScalarField d_;
 
+        //- Continuous phase name
+        word continuousPhaseName_;
+
         //- Continuous phase
         mutable const phaseModel* continuousPhasePtr_;
 
@@ -161,11 +164,7 @@ public:
                 continuousPhasePtr_ =
                    &phase().mesh().lookupObject<phaseModel>
                     (
-                        IOobject::groupName
-                        (
-                            "alpha",
-                            diameterProperties().lookup("continuousPhase")
-                        )
+                        IOobject::groupName("alpha", continuousPhaseName_)
                     );
             }
 

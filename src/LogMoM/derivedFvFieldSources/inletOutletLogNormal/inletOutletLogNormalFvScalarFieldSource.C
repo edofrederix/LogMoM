@@ -1,6 +1,7 @@
 #include "DimensionedField.H"
 #include "inletOutletLogNormalFvScalarFieldSource.H"
 #include "GeometricField.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * * //
 
@@ -50,7 +51,7 @@ Foam::scalar Foam::inletOutletLogNormalFvScalarFieldSource::q() const
 Foam::inletOutletLogNormalFvScalarFieldSource::
 inletOutletLogNormalFvScalarFieldSource
 (
-    const DimensionedField<scalar, volMesh>& iF,
+    const DimensionedField<scalar, fvMesh>& iF,
     const dictionary& dict
 )
 :
@@ -64,7 +65,7 @@ Foam::inletOutletLogNormalFvScalarFieldSource::
 inletOutletLogNormalFvScalarFieldSource
 (
     const inletOutletLogNormalFvScalarFieldSource& field,
-    const DimensionedField<scalar, volMesh>& iF
+    const DimensionedField<scalar, fvMesh>& iF
 )
 :
     fvScalarFieldSource(field, iF),
@@ -82,18 +83,18 @@ Foam::inletOutletLogNormalFvScalarFieldSource::
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::volMesh>>
+Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::fvMesh>>
 Foam::inletOutletLogNormalFvScalarFieldSource::sourceValue
 (
     const fvSource& model,
-    const DimensionedField<scalar, volMesh>& source
+    const DimensionedField<scalar, fvMesh>& source
 ) const
 {
     const scalar pi(constant::mathematical::pi);
     const scalar gamma(internalField().dimensions()[dimensionSet::LENGTH]+3);
 
     return
-        DimensionedField<scalar,volMesh>::New
+        DimensionedField<scalar,fvMesh>::New
         (
             model.name() + ":" + this->internalField().name() + "SourceValue",
             this->internalField().mesh(),
@@ -133,11 +134,11 @@ Foam::inletOutletLogNormalFvScalarFieldSource::sourceValue
 }
 
 
-Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::volMesh>>
+Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::fvMesh>>
 Foam::inletOutletLogNormalFvScalarFieldSource::internalCoeff
 (
     const fvSource& model,
-    const DimensionedField<scalar, volMesh>& source
+    const DimensionedField<scalar, fvMesh>& source
 ) const
 {
     return neg0(source);

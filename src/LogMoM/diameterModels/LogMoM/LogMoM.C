@@ -105,6 +105,7 @@ Foam::diameterModels::LogMoM::LogMoM
         phase.mesh(),
         dimensionedScalar(dimLength, 0.0)
     ),
+    continuousPhaseName_(diameterProperties.lookup("continuousPhase")),
     continuousPhasePtr_(nullptr),
     lambda_
     (
@@ -395,19 +396,17 @@ bool Foam::diameterModels::LogMoM::writeData(Ostream& os) const
     return os.good();
 }
 
-bool Foam::diameterModels::LogMoM::read(const dictionary& phaseProperties)
+bool Foam::diameterModels::LogMoM::read(const dictionary& diameterProperties)
 {
-    diameterModel::read(phaseProperties);
+    dMax_.read(diameterProperties);
+    dMin_.read(diameterProperties);
 
-    diameterProperties().lookup("dMin") >> dMin_;
-    diameterProperties().lookup("dMax") >> dMax_;
-
-    sigmaMin_ = diameterProperties().lookupOrDefault<scalar>("sigmaMin", 0);
-    sigmaMax_ = diameterProperties().lookupOrDefault<scalar>("sigmaMax", 2);
+    sigmaMin_ = diameterProperties.lookupOrDefault<scalar>("sigmaMin", 0);
+    sigmaMax_ = diameterProperties.lookupOrDefault<scalar>("sigmaMax", 2);
 
     PtrList<LogMoMSource>
     (
-        diameterProperties().lookup("sources"),
+        diameterProperties.lookup("sources"),
         LogMoMSource::iNew(*this)
     ).transfer(sources_);
 

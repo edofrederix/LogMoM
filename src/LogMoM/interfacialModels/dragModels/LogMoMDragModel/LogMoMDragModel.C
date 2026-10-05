@@ -31,7 +31,6 @@ Foam::dragModels::LogMoMDragModel::LogMoMDragModel
         (
             dict.subDict("drag"),
             interface,
-            false,
             registerObject
         ).ptr()
     ),

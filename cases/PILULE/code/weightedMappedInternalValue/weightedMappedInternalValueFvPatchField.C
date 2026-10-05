@@ -1,7 +1,7 @@
 #include "weightedMappedInternalValueFvPatchField.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "interpolationCell.H"
+#include "cell_interpolation.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -10,7 +10,7 @@ Foam::weightedMappedInternalValueFvPatchField<Type>::
 weightedMappedInternalValueFvPatchField
 (
     const fvPatch& p,
-    const DimensionedField<Type, volMesh>& iF,
+    const DimensionedField<Type, fvMesh>& iF,
     const dictionary& dict
 )
 :
@@ -24,7 +24,7 @@ weightedMappedInternalValueFvPatchField
 (
     const weightedMappedInternalValueFvPatchField<Type>& ptf,
     const fvPatch& p,
-    const DimensionedField<Type, volMesh>& iF,
+    const DimensionedField<Type, fvMesh>& iF,
     const fieldMapper& mapper
 )
 :
@@ -37,7 +37,7 @@ Foam::weightedMappedInternalValueFvPatchField<Type>::
 weightedMappedInternalValueFvPatchField
 (
     const weightedMappedInternalValueFvPatchField<Type>& ptf,
-    const DimensionedField<Type, volMesh>& iF
+    const DimensionedField<Type, fvMesh>& iF
 )
 :
     mappedInternalValueFvPatchField<Type>(ptf, iF),
@@ -70,7 +70,7 @@ void Foam::weightedMappedInternalValueFvPatchField<Type>::updateCoeffs()
     // Construct mapped values
     Field<Type> sampleValues;
 
-    if (this->interpolationScheme_ != interpolationCell<Type>::typeName)
+    if (this->interpolationScheme_ != interpolations::cell<Type>::typeName)
     {
         // Create an interpolation
         autoPtr<interpolation<Type>> interpolatorPtr

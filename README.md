@@ -27,13 +27,13 @@ EU DuC.
 
 ## Prerequisites
 
-* OpenFOAM-13 Foundation version. While it may compile against other versions,
+* OpenFOAM-14 Foundation version. While it may compile against other versions,
   this is not tested and currently not supported.
 * Python with Numpy, Scipy and Matplotlib for post-processing scripts
 
 ## Usage
 
-* Make sure that OpenFOAM-13 is loaded into your environment
+* Make sure that OpenFOAM-14 is loaded into your environment
 * Compile all libraries and apps with
 
 <pre>
@@ -113,7 +113,7 @@ examples.
 
 For bug reports or support, feel free to contact Edo Frederix at
 frederix@nrg.eu. Please note that this code is not maintained nor regularly
-updated, and is only tested with OpenFOAM-13. Questions related to other
+updated, and is only tested with OpenFOAM-14. Questions related to other
 versions will thus not be answered.
 
 ## Disclaimer
