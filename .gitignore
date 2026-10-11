@@ -76,3 +76,6 @@ polyMesh
 # Mesh files
 *.msh
 *.sim
+
+# Local VSCode environment file
+.vscode/env.local.sh
