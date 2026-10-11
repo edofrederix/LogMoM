@@ -29,6 +29,9 @@ void Foam::diameterModels::LogMoM::limitMoments()
     // kappai^3/(36*1e6*pi). This condition can be derived from Eq. (9) in
     // Habiyaremye et al., (2022). This condition is extended to assure that the
     // size distribution width remains between sigmaMin and sigmaMax.
+    //
+    // The boundary values are limited as well, after the boundary conditions
+    // are corrected, because these can produce non-realizable values.
 
     const scalar pi(constant::mathematical::pi);
 
@@ -37,6 +40,14 @@ void Foam::diameterModels::LogMoM::limitMoments()
 
     kappai_ = min(max(kappai_, kappaiMin), kappaiMax);
     kappai_.correctBoundaryConditions();
+
+    volScalarField::Boundary& kappaiBf = kappai_.boundaryFieldRef();
+
+    forAll(kappaiBf, patchi)
+    {
+        kappaiBf[patchi] ==
+            min(max(kappaiBf[patchi], kappaiMin.value()), kappaiMax.value());
+    }
 
     const volScalarField lambdaMin
     (
@@ -52,6 +63,18 @@ void Foam::diameterModels::LogMoM::limitMoments()
 
     lambda_ = min(max(lambda_, lambdaMin), lambdaMax);
     lambda_.correctBoundaryConditions();
+
+    volScalarField::Boundary& lambdaBf = lambda_.boundaryFieldRef();
+
+    forAll(lambdaBf, patchi)
+    {
+        lambdaBf[patchi] ==
+            min
+            (
+                max(lambdaBf[patchi], lambdaMin.boundaryField()[patchi]),
+                lambdaMax.boundaryField()[patchi]
+            );
+    }
 }
 
 void Foam::diameterModels::LogMoM::correctDistribution()
@@ -184,7 +207,7 @@ Foam::diameterModels::LogMoM::LogMoM
     const dimensionedScalar kappaiMin(6.0/dMax_);
     const dimensionedScalar kappaiMax(6.0/dMin_);
 
-    kappai_ = min(max(kappai_, kappaiMin), kappaiMax);
+    kappai_ == min(max(kappai_, kappaiMin), kappaiMax);
 
     const volScalarField lambdaMin
     (
@@ -198,7 +221,7 @@ Foam::diameterModels::LogMoM::LogMoM
       * exp(3.0*sqr(sigmaMax_))
     );
 
-    lambda_ = min(max(lambda_, lambdaMin), lambdaMax);
+    lambda_ == min(max(lambda_, lambdaMin), lambdaMax);
 
     correctDistribution();
     d_ = d(3,2);
